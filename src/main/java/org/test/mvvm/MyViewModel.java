@@ -1,4 +1,4 @@
-package org.test.week3_4;
+package org.test.mvvm;
 
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;

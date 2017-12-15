@@ -1,0 +1,14 @@
+DROP TABLE User
+
+CREATE TABLE User (
+id INTEGER PRIMARY KEY IDENTITY, 
+name VARCHAR(30),
+pw VARCHAR(30)
+)
+
+select * from user;
+
+
+--do some example data
+INSERT INTO User Values (1, 'member1', 'password')
+INSERT INTO User Values (2, 'member2', 'password')
