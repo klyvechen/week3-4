@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.test.model.Article" table="article">
+
+		<id name="articleId" column="articleId">
+			<generator class="identity" />
+		</id>
+
+		<property name="parentId" column="parentId" />
+		<property name="password" column="password" />
+		<property name="userId" column="userId" />
+		<property name="password" column="password" />
+		<property name="content" column="content" />
+		<property name="TagDetailId" column="TagDetailId" />
+		<!-- <property name="clubPic" column="clubPic" /> -->		
+ 		<set name="tagDetail" table="tag-detail" lazy="false" cascade="all" inverse="true">
+			<key><column name="articleId"/></key>
+			<one-to-many class="org.test.model.TagDetail"/>
+		</set>  
+	</class>
+</hibernate-mapping>
+
