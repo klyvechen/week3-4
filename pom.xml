@@ -28,7 +28,7 @@
 		</repository>
 		<repository>
 			<id>ZK EVAL</id>
-			<name>ZK Evaluation Repository</name>
+      		<name>ZK Evaluation Repository</name>
 			<url>http://mavensync.zkoss.org/eval</url>
 		</repository>
 	</repositories>
@@ -44,12 +44,11 @@
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkbind</artifactId>
 			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zkforge</groupId>
-			<artifactId>ckez</artifactId>
-			<version>3.6.0.0</version>
-		</dependency>
+		</dependency><dependency>
+    <groupId>org.zkoss.zkforge</groupId>
+    <artifactId>ckez</artifactId>
+    <version>3.6.0.0</version>
+</dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zul</artifactId>
@@ -65,7 +64,7 @@
 			<artifactId>zhtml</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
