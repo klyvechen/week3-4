@@ -12,11 +12,12 @@ import org.test.model.service.UserService;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zul.DefaultTreeModel;
 import org.zkoss.zul.TreeModel;
 import org.zkoss.zul.TreeNode;
 
-public class MyViewModel {
+public class MyViewModel extends SelectorComposer{
 	List<Article> articleWritenByUser;
 	List<Article> lastest10Article;
 	List<Article> lastest10RepliedArticle;
@@ -27,9 +28,7 @@ public class MyViewModel {
 	TagService ts = new TagService();
 	TagDetailService tds = new  TagDetailService();
 	
-	public void insertArticle(Article article){
-		
-		
+	public void insertArticle(Article article){	
 		as.insertNewArticle(article);
 	}
 	
