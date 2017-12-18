@@ -6,6 +6,7 @@ public class Article {
 	Integer articleId; //primary key
 	Integer parentId;
 	Integer userId;
+	String title;
 	String content;
 	Integer TagDetailId;
 	Date date;

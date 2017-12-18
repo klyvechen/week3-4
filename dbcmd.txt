@@ -1,3 +1,6 @@
+java -classpath lib/hsqldb.jar org.hsqldb.server.Server --database.0 file:hsqldb/hemrajdb --dbname.0 testdb
+jdbc:hsqldb:mem:testdb
+
 DROP TABLE User
 
 CREATE TABLE user (

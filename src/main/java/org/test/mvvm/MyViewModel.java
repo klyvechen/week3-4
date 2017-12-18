@@ -3,12 +3,12 @@ package org.test.mvvm;
 import java.util.List;
 
 import org.test.model.Article;
-import org.test.model.PackageData;
-import org.test.model.PackageDataUtil;
 import org.test.model.service.ArticleService;
 import org.test.model.service.TagDetailService;
 import org.test.model.service.TagService;
 import org.test.model.service.UserService;
+import org.test.model.tree.PackageData;
+import org.test.model.tree.PackageDataUtil;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;

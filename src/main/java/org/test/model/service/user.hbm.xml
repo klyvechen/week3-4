@@ -5,17 +5,14 @@
 <hibernate-mapping>
 	<class name="org.test.model.User" table="user">
 
-		<id name="useId" column="userId">
+		<id name="userid" column="userid">
 			<generator class="identity" />
 		</id>
 
-		<property name="username" column="useername" />
+		<property name="username" column="username" />
 		<property name="password" column="password" />
 		<!-- <property name="clubPic" column="clubPic" /> -->		
- 		<set name="article" table="article" lazy="false" cascade="all" inverse="true">
-			<key><column name="userId"/></key>
-			<one-to-many class="org.test.model.Article"/>
-		</set>  
+
 	</class>
 </hibernate-mapping>
 

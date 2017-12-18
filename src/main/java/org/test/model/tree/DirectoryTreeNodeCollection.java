@@ -1,4 +1,4 @@
-package org.test.model;
+package org.test.model.tree;
 
 import java.util.LinkedList;
 

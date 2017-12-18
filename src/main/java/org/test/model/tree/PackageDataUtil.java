@@ -1,4 +1,4 @@
-package org.test.model;
+package org.test.model.tree;
 
 public class PackageDataUtil {
 	private static DirectoryTreeNode<PackageData> root;
@@ -9,9 +9,9 @@ public class PackageDataUtil {
 
 					{
 						add(new DirectoryTreeNode<PackageData>(new PackageData(
-								"/doc", "Release Notes and License")));
+								"Tom", "This is the first place to talk in the forum")));
 						add(new DirectoryTreeNode<PackageData>(new PackageData(
-								"/dist", null),
+								"Mary", "Hi I am Mary, Nice to meet you"),
 								new DirectoryTreeNodeCollection<PackageData>() {
 									private static final long serialVersionUID = 3541713473898615987L;
 

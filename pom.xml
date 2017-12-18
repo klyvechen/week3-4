@@ -10,7 +10,7 @@
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-${project.version}-FL-${maven.build.timestamp}</packname>
 	</properties>
-	<packaging>war</packaging>
+	<!-- <packaging>war</packaging> -->
 	<name>The week3-4 Project</name>
 	<description>The week3-4 Project</description>
 	<licenses>
@@ -44,16 +44,35 @@
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkbind</artifactId>
 			<version>${zk.version}</version>
-		</dependency><dependency>
-    <groupId>org.zkoss.zkforge</groupId>
-    <artifactId>ckez</artifactId>
-    <version>3.6.0.0</version>
-</dependency>
+		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zkforge</groupId>
 			<artifactId>ckez</artifactId>
 			<version>3.6.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zkforge</groupId>
+			<artifactId>ckez</artifactId>
+			<version>3.6.0.0</version>
+		</dependency>
+		<dependency>
+        <artifactId>hibernate-ehcache</artifactId>
+        <groupId>org.hibernate</groupId>
+        <version>4.3.5.Final</version>
+    	</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>4.3.5.Final</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>1.8.0.10</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zul</artifactId>

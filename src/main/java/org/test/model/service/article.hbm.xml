@@ -10,9 +10,7 @@
 		</id>
 
 		<property name="parentId" column="parentId" />
-		<property name="password" column="password" />
 		<property name="userId" column="userId" />
-		<property name="password" column="password" />
 		<property name="content" column="content" />
 		<property name="TagDetailId" column="TagDetailId" />
 		<!-- <property name="clubPic" column="clubPic" /> -->		

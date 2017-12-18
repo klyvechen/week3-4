@@ -1,4 +1,4 @@
-package org.test.model;
+package org.test.model.tree;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
