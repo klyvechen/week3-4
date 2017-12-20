@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.sql.Time;
 
 
-public class Article {
+public class Article implements Cloneable {
 	Integer articleId; //primary key
 	Integer parentId;
 	Integer rootId;
@@ -14,6 +14,11 @@ public class Article {
 	Integer tagId;
 	Date date;
 	Time time;
+	public Article(){
+		this.title = "default title";
+		this.content = "default content";
+	}
+	
 	public Integer getArticleId() {
 		return articleId;
 	}
@@ -67,5 +72,11 @@ public class Article {
 	}
 	public void setTime(Time time) {
 		this.time = time;
+	}
+	
+	@Override
+	public Article clone() throws CloneNotSupportedException{
+		Article a = (Article) super.clone();		
+		return a;		
 	}
 }

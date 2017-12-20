@@ -12,7 +12,7 @@ import org.zkoss.zul.ListitemRenderer;
 public class ArticleListGroupRender implements ListitemRenderer<Object>{
 		public void render(Listitem listitem, Object obj, int index) throws Exception {
 	 
-	        if (listitem instanceof Listgroup) {
+	        if (listitem instanceof Listgroup) {        	
 	            ArticleGroupModel.ArticleGroupInfo groupInfo = (ArticleGroupModel.ArticleGroupInfo) obj;
 	            Article article = groupInfo.getFirstChild();
 	            String groupTxt;
@@ -31,7 +31,7 @@ public class ArticleListGroupRender implements ListitemRenderer<Object>{
 	        } else if (listitem instanceof Listgroupfoot) {
 	            Listcell cell = new Listcell();
 	            cell.setSclass("foodFooter");
-	            cell.setSpan(6);
+	            cell.setSpan(2);
 	            cell.appendChild(new Label("Total " + obj + " Items"));
 	            listitem.appendChild(cell);
 	        } else {

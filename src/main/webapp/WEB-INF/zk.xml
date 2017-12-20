@@ -9,5 +9,7 @@
 		<value>week3-4</value>
 	</preference>
 	-->
-	
+	<language-config>
+        <addon-uri>/WEB-INF/ckez-bind-addon.xml</addon-uri>
+    </language-config>
 </zk>

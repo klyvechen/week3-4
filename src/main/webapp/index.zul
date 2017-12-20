@@ -1,15 +1,21 @@
-<zk>
+<zk xmlns:n="native" xmlns:w="client">
 	<window apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm')@init('org.test.mvvm.MyViewModel')"
 		validationMessages="@id('vmsgs')">
-
+		<intbox value="@bind(vm.index)"/>
+		<hlayout>
+            <intbox id="qbox" value="@load(vm.index)
+                @save(vm.index, before='saveOrder')
+                @validator(quantityValidator)"/>
+            <label value="@bind(vmsgs[qbox])" sclass="red" />
+        </hlayout>
 		<hbox>
 			<vbox>
 				<!-- 
 					<div >
 					<listbox id="lastest10Article" height="100px" > 
 					-->
-				<div viewModel="@id('vm') @init('org.test.mvvm.MyViewModel')">
+				<div>
 					<listbox  height="400px" model="@load(vm.lastest10Article)"> 
 						<listhead>
 							<listheader label="Newest 10 article"
@@ -69,33 +75,36 @@
 				</div>
 			</vbox>
 		</hbox>
-		<button label="New Article" onClick="@command('cmd')"
+		<button label="New Article" onClick="@command()"
 			popup="isckeditor" />
+			
+		<div width="100px" height="100px" value="@init(vm.temparticle)">
+			<textbox value="@init(vm.temparticle.title)@load(vm.temparticle.title)"></textbox>
+			<textbox value="@init(vm.temparticle.content)@load(vm.temparticle.content)"></textbox>
+		</div>
 		<tabbox width="100%" sclass="nav_tabs">
 			<tabs id="tabs">
-				<tab label="Our Product" onSelect="" />
-				<tab label="Live Demo" onSelect="" />
-				<tab label="Online Documentation" onSelect="" />
+				<tab label="List Model" onSelect="" />
+				<tab label="Expanded Model" onSelect="" />
+				<tab label="Tree Model" onSelect="" />
 			</tabs>
 
 			<tabpanels>
 				<tabpanel>
 				 <div viewModel="@id('vm') @init('org.test.mvvm.MyViewModel')">
-					 <listbox model="@load(vm.groupModel)" height="800px" checkmark="true"
+					 <listbox model="@load(vm.groupModel)" height="400px"  onSelect="@command('selectGroup', data=event.reference.value)"
 				        multiple="true" itemRenderer="org.test.mvvm.ArticleListGroupRender">
-				        <!-- Make Grouping item selectable				        
 				        <custom-attributes org.zkoss.zul.listbox.groupSelect="true" />
-				        -->
 				        <listhead>        
-				            <listheader width="160px" label="Title" />
-				            <listheader width="140px" label="Content" />				                   
+				            <listheader width="300px" sort="auto(title)" label="Title" />
+				            <listheader label="Content" sort="auto(contain)"/>				                   
 				        </listhead>       
 				    </listbox>
 				     </div>
 				</tabpanel>
 				<tabpanel>
 
-					<tree id="tree1" width="300px">
+					<tree id="tree1">
 						<treecols>
 							<treecol label="My Contact List" />
 						</treecols>
@@ -128,17 +137,23 @@
 			</tabpanels>
 		</tabbox>
 		<popup id="isckeditor">
-			<ckeditor width="850px">
-				<attribute name="value">
-					<!--     			<![CDATA[ <table width="200" cellspacing="1"
-						cellpadding="1" border="1"> <tbody> <tr
-						style="background: #B7B313; color:white;"> <td>First
-						Name</td> <td>Last Name</td> </tr> <tr> <td>Jone</td>
-						<td>Hayes</td> </tr> <tr> <td>Mary</td> <td>Bally</td>
-						</tr> </tbody> </table> ]]>
-					-->
-				</attribute>
-			</ckeditor>
+			<vlayout>
+				<hlayout>
+					TITLE:
+					<textbox id="inputTitle" width="150px" tabindex="1" value="@save(vm.temparticle.title)" />
+				</hlayout>
+
+				<n:form>
+					ckeditor
+					<ckeditor id="htmlEditor" width="850px"
+						value="@save(vm.temparticle.content)">
+						<attribute name="value">
+							<![CDATA[ please type here ]]>
+						</attribute>
+					</ckeditor>
+				</n:form>
+				<button label="New article" onClick="@command('newArticle')"></button>
+			</vlayout>
 		</popup>
 		<separator height="30px"></separator>
 

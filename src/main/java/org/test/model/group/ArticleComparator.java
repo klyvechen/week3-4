@@ -10,19 +10,22 @@ public class ArticleComparator implements Comparator<Article>, GroupComparator<A
 	private static final long serialVersionUID = 1L;
 
 	public int compareGroup(Article o1, Article o2) {
-		try{
+	
 		Integer result = o1.getRootId()-o2.getRootId();
-		return (result==null)? 0: result;
-		}catch(Exception e){
-			return 0;
-		}
-		
+		System.out.println(result);
+		return result;
+	
 	}
 
 	public int compare(Article o1, Article o2) {
-		if(o2.getRootId().equals(o2.getRootId()))
+		if(o1.getRootId()-o2.getRootId() == 0){
+			System.out.println(o1+" , "+o2);
+			System.out.println(o1.getRootId()+" , "+o2.getRootId());
+			System.out.println("return 0");
 			return 0;
-		else
+		}else{
+			System.out.println("return 1");
 			return 1;
+		}
 	}
 }
