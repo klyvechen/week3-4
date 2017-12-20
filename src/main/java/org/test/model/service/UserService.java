@@ -32,7 +32,7 @@ public class UserService {
 //		     return null;
 //		 }
 		 
-		Session session = (Session)HibernateUtil.getSessionFactory().getCurrentSession();
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 
 		session.beginTransaction();
 		SQLQuery query = session.createSQLQuery(GET_USERS);

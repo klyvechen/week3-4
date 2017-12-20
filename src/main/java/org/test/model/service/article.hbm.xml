@@ -10,14 +10,19 @@
 		</id>
 
 		<property name="parentId" column="parentId" />
+		<property name="rootId" column="rootId" />
 		<property name="userId" column="userId" />
 		<property name="content" column="content" />
-		<property name="TagDetailId" column="TagDetailId" />
-		<!-- <property name="clubPic" column="clubPic" /> -->		
+		<property name="title" column="title" />		
+		<property name="tagId" column="tagId" />
+		
+		<!-- <property name="clubPic" column="clubPic" /> 
+		
  		<set name="tagDetail" table="tag-detail" lazy="false" cascade="all" inverse="true">
 			<key><column name="articleId"/></key>
 			<one-to-many class="org.test.model.TagDetail"/>
 		</set>  
+		-->		
 	</class>
 </hibernate-mapping>
 

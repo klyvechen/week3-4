@@ -3,30 +3,78 @@ package org.test.model.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.test.hibernate.util.HibernateUtil;
 import org.test.model.Article;
+import org.test.model.User;
 
 public class ArticleService {
-	public List<Article> getArticleWritenByUserId(Integer userId){
-		List<Article> articlelist = new ArrayList<Article>(); 
-		
+	private static final String GET_ALL_ARTICLE = "select * from article ";
+	private static final String GET_LATEST10_ARTICLE = "select top 10 * from article where parentid is null order by DATE desc, TIME desc";
+	private static final String GET_LATEST10_REPLY = "select top 10 * from article where parentid is not null order by DATE desc, TIME desc";
+	private static final String GET_LATEST10_USERS_ARTICLE = "select top 10 * from article  where userid = :userid order by DATE desc, TIME desc";
+	public List<Article> getAllArticles(){
+		System.out.println("in the get lastest10Article");
+		List<Article> articlelist = new ArrayList<Article>();
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		SQLQuery query = session.createSQLQuery(GET_ALL_ARTICLE);
+		query.addEntity(Article.class);
+		articlelist = query.list();
+		session.getTransaction().commit();		
 		return articlelist;
 	}
 	
 	public List<Article> getLastest10Article(){
-		List<Article> articlelist = new ArrayList<Article>(); 
-		
+		System.out.println("in the get lastest10Article");
+		List<Article> articlelist = new ArrayList<Article>();
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+
+		session.beginTransaction();
+		SQLQuery query = session.createSQLQuery(GET_LATEST10_ARTICLE);
+		query.addEntity(Article.class);
+		articlelist = query.list();
+		session.getTransaction().commit();		
+
 		return articlelist;
 	}
 	
-	public List<Article> getLastest10RepliedArticle(){
-		List<Article> articlelist = new ArrayList<Article>(); 
-		
+	public List<Article> getLastest10Reply(){
+		List<Article> articlelist = new ArrayList<Article>();
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+
+		session.beginTransaction();
+		SQLQuery query = session.createSQLQuery(GET_LATEST10_REPLY);
+		query.addEntity(Article.class);
+		articlelist = query.list();
+		session.getTransaction().commit();		
+		for(int i = 0; i< articlelist.size();i++){
+			Article at = articlelist.get(i);
+			if(at.getTitle().equals("")){
+				at.setTitle("為推文 沒有標題");
+			}
+		}
+			
 		return articlelist;
 	}
 	
-	public List<Article> getLastest10ArticleTaggedUser(){
-		List<Article> articlelist = new ArrayList<Article>(); 
-		
+	public List<Article> getLastest10UserArticle(int userId){
+		List<Article> articlelist = new ArrayList<Article>();
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+
+		session.beginTransaction();
+		SQLQuery query = session.createSQLQuery(GET_LATEST10_USERS_ARTICLE);
+		query.setParameter("userid", userId);
+		query.addEntity(Article.class);
+		articlelist = query.list();
+		session.getTransaction().commit();		
+		for(int i = 0; i< articlelist.size();i++){
+			Article at = articlelist.get(i);
+			if(at.getTitle().equals("")){
+				at.setTitle("為推文 沒有標題");
+			}
+		}
 		return articlelist;
 	}
 	
@@ -36,5 +84,13 @@ public class ArticleService {
 	
 	public void updateArticle(Article article){
 		
+	}
+	
+	public static void main(String[] args){
+		ArticleService as = new  ArticleService();
+		System.out.println(as.getLastest10Article());
+		System.out.println(as.getLastest10Reply());
+		System.out.println(as.getAllArticles());
+		System.exit(0);
 	}
 }
