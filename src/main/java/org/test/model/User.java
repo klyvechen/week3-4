@@ -1,7 +1,7 @@
 package org.test.model;
 
 public class User {
-	private Integer userid; //primary key
+	private Integer userid = 0; //primary key
 	private String username;
 	private String password;
 	

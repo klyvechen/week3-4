@@ -10,10 +10,23 @@ import org.test.model.Article;
 import org.test.model.User;
 
 public class ArticleService {
+	private static final String GET_IDENTITY = "select top 1 * from article order by articleId desc";
 	private static final String GET_ALL_ARTICLE = "select * from article ";
 	private static final String GET_LATEST10_ARTICLE = "select top 10 * from article where parentid is null order by DATE desc, TIME desc";
 	private static final String GET_LATEST10_REPLY = "select top 10 * from article where parentid is not null order by DATE desc, TIME desc";
 	private static final String GET_LATEST10_USERS_ARTICLE = "select top 10 * from article  where userid = :userid order by DATE desc, TIME desc";
+	private static final String INSERT_NEW_ARTICLE = "insert into article values(:articleId, :parentId, :rootId, :userId, :title , :content, :tagId, CURRENT_DATE, CURRENT_TIME, :status)";
+	private static Integer tableIdentity = 0;
+	static{
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		SQLQuery query = session.createSQLQuery(GET_IDENTITY);		
+		query.addEntity(Article.class);		
+		Article u = (Article)query.uniqueResult();
+		tableIdentity = (u!= null)? u.getArticleId(): 0;
+		session.getTransaction().commit();		
+	}
+	
 	public List<Article> getAllArticles(){
 		System.out.println("in the get lastest10Article");
 		List<Article> articlelist = new ArrayList<Article>();
@@ -79,7 +92,20 @@ public class ArticleService {
 	}
 	
 	public void insertNewArticle(Article article){
-		
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		SQLQuery query = session.createSQLQuery(INSERT_NEW_ARTICLE);		
+		query.setParameter("articleId", ++tableIdentity);
+		query.setParameter("parentId", article.getParentId());
+		query.setParameter("rootId", article.getRootId());
+		query.setParameter("userid", article.getUserId());
+		query.setParameter("title", article.getTitle());
+		query.setParameter("content", article.getContent());
+		query.setParameter("tagId", article.getTagId());
+		query.setParameter("status", 1);
+		query.addEntity(User.class);
+		query.executeUpdate();
+		session.getTransaction().commit();
 	}
 	
 	public void updateArticle(Article article){

@@ -2,12 +2,18 @@
 	<window apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm')@init('org.test.mvvm.MyViewModel')"
 		validationMessages="@id('vmsgs')">
-		<intbox value="@bind(vm.index)"/>
+		
 		<hlayout>
-            <intbox id="qbox" value="@load(vm.index)
-                @save(vm.index, before='saveOrder')
-                @validator(quantityValidator)"/>
-            <label value="@bind(vmsgs[qbox])" sclass="red" />
+			
+				LOGIN
+				<textbox value="@save(vm.loginUser.username)"/>
+	            <textbox value=" @save(vm.loginUser.password)"  type="password"/>            
+	            <button label="login" onClick="@command('AuthenticateUser')"/>
+	           	REGISTER
+	            <textbox value="@save(vm.regUser.username)"/>
+	            <textbox value=" @save(vm.regUser.password)"  type="password"/>            
+	            <button label="Register" onClick="@command('registUser')"/>
+            
         </hlayout>
 		<hbox>
 			<vbox>
@@ -35,7 +41,7 @@
 				</div>
 			</vbox>
 			<vbox>
-				<div viewModel="@id('vm') @init('org.test.mvvm.MyViewModel')">
+				<div>
 					<listbox  height="400px" model="@load(vm.lastest10Reply)"> 
 						<listhead>
 							<listheader label="Newest 10 Reply"
@@ -55,7 +61,7 @@
 				</div>
 			</vbox>
 			<vbox>
-				<div viewModel="@id('vm') @init('org.test.mvvm.MyViewModel')">
+				<div>
 					<listbox  height="400px" model="@load(vm.lastest10UserArticle)"> 
 						<listhead>
 							<listheader label="Newest 10 My Article"
@@ -75,8 +81,8 @@
 				</div>
 			</vbox>
 		</hbox>
-		<button label="New Article" onClick="@command()"
-			popup="isckeditor" />
+		<button label="New Article" onClick=""
+			popup="ckarticleEditor" />
 			
 		<div width="100px" height="100px" value="@init(vm.temparticle)">
 			<textbox value="@init(vm.temparticle.title)@load(vm.temparticle.title)"></textbox>
@@ -91,13 +97,16 @@
 
 			<tabpanels>
 				<tabpanel>
-				 <div viewModel="@id('vm') @init('org.test.mvvm.MyViewModel')">
-					 <listbox model="@load(vm.groupModel)" height="400px"  onSelect="@command('selectGroup', data=event.reference.value)"
+				 <div>
+					 <listbox model="@load(vm.groupModel)" height="1000px"
 				        multiple="true" itemRenderer="org.test.mvvm.ArticleListGroupRender">
 				        <custom-attributes org.zkoss.zul.listbox.groupSelect="true" />
 				        <listhead>        
 				            <listheader width="300px" sort="auto(title)" label="Title" />
-				            <listheader label="Content" sort="auto(contain)"/>				                   
+				            <listheader label="Content" sort="auto(contain)"/>
+				            <listheader width="100px" label="reply" />
+				            <listheader width="100px" label="edit"/>			
+				            <listheader width="100px" label="delete" />
 				        </listhead>       
 				    </listbox>
 				     </div>
@@ -136,7 +145,7 @@
 				</tabpanel>
 			</tabpanels>
 		</tabbox>
-		<popup id="isckeditor">
+		<popup id="ckarticleEditor">
 			<vlayout>
 				<hlayout>
 					TITLE:
@@ -152,10 +161,28 @@
 						</attribute>
 					</ckeditor>
 				</n:form>
-				<button label="New article" onClick="@command('newArticle')"></button>
+				<button label="New article" onClick="@command('newArticle'  )"></button>
 			</vlayout>
 		</popup>
-		<separator height="30px"></separator>
-
+		<popup id="replyEditor">
+			<vlayout>
+				<n:form>
+					reply
+					<ckeditor id="ckreplyEditor" width="850px"
+						value="@save(vm.temparticle.content)">
+						<attribute name="value">
+							<![CDATA[ please type here ]]>
+						</attribute>
+					</ckeditor>
+				</n:form>
+				<button label="New Reply" onClick="@command('newReply')"></button>
+			</vlayout>
+		</popup>
+		<separator height="30px"></separator>		
 	</window>
+	<script>
+		function setReplyParameter(e){
+			console.log(e);
+		}
+	</script>
 </zk>
