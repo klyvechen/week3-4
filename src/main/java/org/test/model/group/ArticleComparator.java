@@ -12,19 +12,14 @@ public class ArticleComparator implements Comparator<Article>, GroupComparator<A
 	public int compareGroup(Article o1, Article o2) {
 	
 		Integer result = o1.getRootId()-o2.getRootId();
-		System.out.println(result);
 		return result;
 	
 	}
 
 	public int compare(Article o1, Article o2) {
 		if(o1.getRootId()-o2.getRootId() == 0){
-			System.out.println(o1+" , "+o2);
-			System.out.println(o1.getRootId()+" , "+o2.getRootId());
-			System.out.println("return 0");
 			return 0;
 		}else{
-			System.out.println("return 1");
 			return 1;
 		}
 	}

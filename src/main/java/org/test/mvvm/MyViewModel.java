@@ -1,4 +1,4 @@
-package org.test.mvvm;
+ package org.test.mvvm;
 
 import java.util.List;
 
@@ -15,11 +15,19 @@ import org.test.model.service.TagService;
 import org.test.model.service.UserService;
 import org.test.model.tree.PackageData;
 import org.test.model.tree.PackageDataUtil;
+import org.test.myevent.SampleExecutorHolder;
+import org.zkoss.bind.BindContext;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.ContextParam;
+import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.DefaultTreeModel;
 import org.zkoss.zul.TreeModel;
 import org.zkoss.zul.TreeNode;
@@ -35,8 +43,9 @@ public class MyViewModel{
 	private User theUser = new User();
 	private Session sess;
 	private UserCre uc;
-	
-	
+	private Button newArticleBtn;
+	private SampleExecutorHolder seh = new SampleExecutorHolder();
+	private org.zkoss.zk.ui.event.EventQueue<Event> que = EventQueues.lookup("there is a new article", EventQueues.APPLICATION,true);
 
 	UserService us = new UserService();
 	ArticleService as;
@@ -61,6 +70,13 @@ public class MyViewModel{
     		uc = new UserCre();
     		sess.setAttribute("userCre", uc);
     	}
+    	que.subscribe(new EventListener(){
+    		public void onEvent(Event evt){
+    			System.out.println("in the que event listener");
+    			System.out.println(evt.getName());
+    			renewGroupModel();
+    		}
+    	});;
     }
     
     @NotifyChange({"lastest10UserArticle","groupModel"})
@@ -123,7 +139,18 @@ public class MyViewModel{
 	public List<Article> getLastest10UserArticle(){
 		return this.lastest10UserArticle;
 	}
-
+	@NotifyChange({"groupModel"})	
+	public void renewGroupModel(){
+		this.groupModel = null;
+		//this method is not good, think a better method again;
+		List<Article> atary = as.getAllArticles();
+    	Article[] ary = new Article[atary.size()];
+    	ary = atary.toArray(ary);
+    	this.groupModel = new ArticleGroupModel(ary, new ArticleComparator());    	
+    	this.setGroupModel(this.groupModel);
+    	System.out.println("renew done");
+	}
+	@NotifyChange({"groupModel"})
 	public void setGroupModel(ArticleGroupModel agm){
 		this.groupModel = agm;
 	}
@@ -139,11 +166,17 @@ public class MyViewModel{
 	public void TempArticle(TempArticle tempArticle) {
 		this.tempArticle = tempArticle;
 	}
-
 	
 	@Command
+	public void newArticle(@ContextParam(ContextType.BIND_CONTEXT) BindContext ctx) throws CloneNotSupportedException{
+		System.out.println("new Article dosomething");
+		Event event = ctx.getTriggerEvent();
+		System.out.println(event.getName());
+		createNewArticle();
+	}
+	
 	@NotifyChange({"lastest10UserArticle","groupModel","tempArticle"})
-	public void newArticle() throws CloneNotSupportedException{
+	public void createNewArticle(){
 		System.out.println("notify show result");
 		Article newArticle = new Article();
 		newArticle.setTitle(tempArticle.getTitle());
@@ -154,8 +187,12 @@ public class MyViewModel{
 		newArticle.setTagId(null);
 		System.out.println(theUser.getUserid());
 		as.insertNewArticle(newArticle);
-		
+		que.publish(new Event("there is a new article",null));
 	}
+	
+
+	
+
 	
     @Command
     public void dealArticle(){

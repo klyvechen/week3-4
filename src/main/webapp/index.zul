@@ -84,14 +84,13 @@
 		<button label="New Article" onClick=""
 			popup="ckarticleEditor" />
 			
-		<div width="100px" height="100px" value="@init(vm.temparticle)">
-			<textbox value="@init(vm.temparticle.title)@load(vm.temparticle.title)"></textbox>
-			<textbox value="@init(vm.temparticle.content)@load(vm.temparticle.content)"></textbox>
+		<div width="100px" height="100px" >
+			<textbox value="@load(vm.temparticle.title)"/>
+			<textbox value="@load(vm.temparticle.content)"/>
 		</div>
 		<tabbox width="100%" sclass="nav_tabs">
 			<tabs id="tabs">
 				<tab label="List Model" onSelect="" />
-				<tab label="Expanded Model" onSelect="" />
 				<tab label="Tree Model" onSelect="" />
 			</tabs>
 
@@ -102,22 +101,14 @@
 				        multiple="true" itemRenderer="org.test.mvvm.ArticleListGroupRender">
 				        <custom-attributes org.zkoss.zul.listbox.groupSelect="true" />
 				        <listhead>        
-				            <listheader width="300px" sort="auto(title)" label="Title" />
-				            <listheader label="Content" sort="auto(contain)"/>
+				            <listheader width="300px" label="Title" />
+				            <listheader label="Content"/>
 				            <listheader width="100px" label="reply" />
 				            <listheader width="100px" label="edit"/>			
 				            <listheader width="100px" label="delete" />
 				        </listhead>       
 				    </listbox>
 				     </div>
-				</tabpanel>
-				<tabpanel>
-
-					<tree id="tree1">
-						<treecols>
-							<treecol label="My Contact List" />
-						</treecols>
-					</tree>
 				</tabpanel>
 				<tabpanel>
 					<groupbox id="grp" closable="false" mold='3d'
