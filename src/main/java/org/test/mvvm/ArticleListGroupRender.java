@@ -51,10 +51,11 @@ public class ArticleListGroupRender implements ListitemRenderer<Object> {
 				Listcell cell1 = new Listcell();
 				Button btn1 = new Button();
 				btn1.setLabel("Reply");				
-				btn1.setPopup("replyEditor");			
+				btn1.setPopup("replyEditor");
+				btn1.setAttribute("theData",data);
 				btn1.addEventListener("onClick", new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						Clients.evalJavaScript(";setReplyParameter(this)");						
+						sessionAddAttribute(event);	
 					}
 				});
 
@@ -65,19 +66,35 @@ public class ArticleListGroupRender implements ListitemRenderer<Object> {
 					Listcell cell2 = new Listcell();
 					Button btn2 = new Button();
 					btn2.setLabel("Edit");
-					btn2.setAttribute("onClick", "@Command('edit')");
+					btn2.setAttribute("theData",data);
+					btn2.addEventListener("onClick", new EventListener() {
+						public void onEvent(Event event) throws Exception {
+							sessionAddAttribute(event);						
+						}
+					});
 					cell2.appendChild(btn2);
 					listitem.appendChild(cell2);
-					Listcell cell3 = new Listcell();
-					Button btn3 = new Button();
-					btn3.setLabel("Delete");
-					btn3.setAttribute("onClick", "@Command('delete')");
-					cell3.appendChild(btn3);
-					listitem.appendChild(cell3);
+					if(data.getParentId()!=null){
+						Listcell cell3 = new Listcell();
+						Button btn3 = new Button();
+						btn3.setLabel("Delete");
+						btn3.setAttribute("theData",data);
+						btn3.addEventListener("onClick", new EventListener() {
+							public void onEvent(Event event) throws Exception {
+								sessionAddAttribute(event);						
+							}
+						});
+						cell3.appendChild(btn3);
+						listitem.appendChild(cell3);
+					}
 				}
 			}
 			listitem.setValue(data);
 		}
 
+	}
+	private void sessionAddAttribute(Event e){
+//		Sessions.getCurrent().setAttribute("Action",((Button)e.getTarget()).getLabel());
+//		Sessions.getCurrent().setAttribute("theArticle", e.getTarget().getAttribute("theData"));
 	}
 }
