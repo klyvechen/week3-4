@@ -106,7 +106,12 @@
 				            <listheader width="100px" label="reply" />
 				            <listheader width="100px" label="edit"/>			
 				            <listheader width="100px" label="delete" />
-				        </listhead>       
+				        </listhead>    
+				        <template name="model" var="article">
+			                <listitem>
+			                    <listcell label="@load(article.title)" />
+			                </listitem>
+			            </template>   
 				    </listbox>
 				     </div>
 				</tabpanel>
