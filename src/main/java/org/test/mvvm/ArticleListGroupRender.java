@@ -94,7 +94,7 @@ public class ArticleListGroupRender implements ListitemRenderer<Object> {
 
 	}
 	private void sessionAddAttribute(Event e){
-//		Sessions.getCurrent().setAttribute("Action",((Button)e.getTarget()).getLabel());
-//		Sessions.getCurrent().setAttribute("theArticle", e.getTarget().getAttribute("theData"));
+		Sessions.getCurrent().setAttribute("Action",((Button)e.getTarget()).getLabel());
+		Sessions.getCurrent().setAttribute("theArticle", e.getTarget().getAttribute("theData"));
 	}
 }

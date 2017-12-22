@@ -161,7 +161,7 @@
 						</attribute>
 					</ckeditor>
 				</n:form>
-				<button label="New article" onClick="@command('newArticle'  )"></button>
+				<button label="New article" onClick="@command('newArticle')"></button>
 			</vlayout>
 		</popup>
 		<popup id="replyEditor">

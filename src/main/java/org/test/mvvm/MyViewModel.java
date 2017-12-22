@@ -35,6 +35,8 @@ public class MyViewModel{
 	private User theUser = new User();
 	private Session sess;
 	private UserCre uc;
+	
+	
 
 	UserService us = new UserService();
 	ArticleService as;
@@ -70,9 +72,7 @@ public class MyViewModel{
     	    		this.setLastest10UserArticle(as.getLastest10UserArticle(theUser.getUserid()));
     	    		sess.setAttribute("sessionUser", theUser);
     	}
-    }
-    
-    
+    }    
     
     @Command
     public void registUser(){
@@ -123,6 +123,10 @@ public class MyViewModel{
 	public List<Article> getLastest10UserArticle(){
 		return this.lastest10UserArticle;
 	}
+
+	public void setGroupModel(ArticleGroupModel agm){
+		this.groupModel = agm;
+	}
 	
 	public ArticleGroupModel getGroupModel(){
 		return this.groupModel;
@@ -138,7 +142,7 @@ public class MyViewModel{
 
 	
 	@Command
-	@NotifyChange("tempArticle")
+	@NotifyChange({"lastest10UserArticle","groupModel","tempArticle"})
 	public void newArticle() throws CloneNotSupportedException{
 		System.out.println("notify show result");
 		Article newArticle = new Article();
@@ -148,9 +152,30 @@ public class MyViewModel{
 		newArticle.setParentId(null);
 		newArticle.setRootId(null);
 		newArticle.setTagId(null);
+		System.out.println(theUser.getUserid());
 		as.insertNewArticle(newArticle);
+		
 	}
-
+	
+    @Command
+    public void dealArticle(){
+    	Article article = (Article)sess.getAttribute("theArticle");
+    	if(sess.getAttribute("Action").equals("Reply")){
+    		Article newArticle = new Article();
+    		newArticle.setTitle(tempArticle.getTitle());
+    		newArticle.setContent(tempArticle.getContent());
+    		newArticle.setUserId(theUser.getUserid());
+    		newArticle.setParentId(article.getArticleId());
+    		newArticle.setRootId(article.getRootId());
+    		newArticle.setTagId(null);	
+    		as.insertNewArticle(newArticle);
+    		
+    	}else if(sess.getAttribute("Action").equals("Edit")){
+    		article.setTitle(tempArticle.getTitle());
+    		article.setContent(tempArticle.getContent());    		
+    	}
+    }
+    
 	@Command
 	public void save(){
 	

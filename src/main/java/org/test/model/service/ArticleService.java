@@ -14,8 +14,9 @@ public class ArticleService {
 	private static final String GET_ALL_ARTICLE = "select * from article ";
 	private static final String GET_LATEST10_ARTICLE = "select top 10 * from article where parentid is null order by DATE desc, TIME desc";
 	private static final String GET_LATEST10_REPLY = "select top 10 * from article where parentid is not null order by DATE desc, TIME desc";
-	private static final String GET_LATEST10_USERS_ARTICLE = "select top 10 * from article  where userid = :userid order by DATE desc, TIME desc";
+	private static final String GET_LATEST10_USERS_ARTICLE = "select top 10 * from article  where userId = :userId order by DATE desc, TIME desc";
 	private static final String INSERT_NEW_ARTICLE = "insert into article values(:articleId, :parentId, :rootId, :userId, :title , :content, :tagId, CURRENT_DATE, CURRENT_TIME, :status)";
+	private static final String UPDATE_ARTICLE = "update article set content = :content, title = :title where articleId = :articleId";
 	private static Integer tableIdentity = 0;
 	static{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -78,7 +79,7 @@ public class ArticleService {
 
 		session.beginTransaction();
 		SQLQuery query = session.createSQLQuery(GET_LATEST10_USERS_ARTICLE);
-		query.setParameter("userid", userId);
+		query.setParameter("userId", userId);
 		query.addEntity(Article.class);
 		articlelist = query.list();
 		session.getTransaction().commit();		
@@ -94,11 +95,13 @@ public class ArticleService {
 	public void insertNewArticle(Article article){
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
+		
 		SQLQuery query = session.createSQLQuery(INSERT_NEW_ARTICLE);		
 		query.setParameter("articleId", ++tableIdentity);
 		query.setParameter("parentId", article.getParentId());
-		query.setParameter("rootId", article.getRootId());
-		query.setParameter("userid", article.getUserId());
+		Integer rootId = (article.getRootId()!=null)?article.getRootId():tableIdentity;
+		query.setParameter("rootId", rootId);
+		query.setParameter("userId", article.getUserId());
 		query.setParameter("title", article.getTitle());
 		query.setParameter("content", article.getContent());
 		query.setParameter("tagId", article.getTagId());
@@ -107,8 +110,24 @@ public class ArticleService {
 		query.executeUpdate();
 		session.getTransaction().commit();
 	}
+	public void deleteArticle(Article article){
+		
+	}
 	
 	public void updateArticle(Article article){
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		SQLQuery query = session.createSQLQuery(INSERT_NEW_ARTICLE);		
+		query.setParameter("articleId", article.getArticleId());
+		query.setParameter("title", article.getTitle());
+		query.setParameter("content", article.getContent());
+		query.setParameter("status", 1);
+		query.addEntity(User.class);
+		query.executeUpdate();
+		session.getTransaction().commit();
+	}
+	
+	public void deleteArticle(){
 		
 	}
 	
