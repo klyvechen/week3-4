@@ -1,0 +1,12 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="new page title" border="normal" viewModel="@id('vm')@init('org.test.mvvm.MyViewModel')">
+		<vbox>			
+				LOGIN
+				name <textbox value="@save(vm.loginUser.username)"/>
+	            password <textbox value=" @save(vm.loginUser.password)"  type="password"/>            
+	            <button label="login" onClick="@command('AuthenticateUser')"/>
+	          
+        <vbox>
+</window>
+</zk>

@@ -147,7 +147,9 @@
 					TITLE:
 					<textbox id="inputTitle" width="150px" tabindex="1" value="@save(vm.temparticle.title)" />
 				</hlayout>
-
+				<hlayout>
+					<template></template>
+				</hlayout>
 				<n:form>
 					ckeditor
 					<ckeditor id="htmlEditor" width="850px"
@@ -157,8 +159,11 @@
 						</attribute>
 					</ckeditor>
 				</n:form>
-				<button label="New article" onClick="@command('newArticle')"></button>
+				<button label="New article" onClick="@command('newArticle')" popup="waitFor10Sec"></button>
 			</vlayout>
+		</popup>
+		<popup id="waitFor10Sec">
+			<button id="undo" label="undo" onClick="@command('undoClick')"/>
 		</popup>
 		<popup id="replyEditor">
 			<vlayout>
@@ -171,7 +176,7 @@
 						</attribute>
 					</ckeditor>
 				</n:form>
-				<button label="New Reply" onClick="@command('newReply')"></button>
+				<button label="New Reply" onClick="@command('newReply')" popup="waitFor10Sec"/>
 			</vlayout>
 		</popup>
 		<separator height="30px"></separator>		
