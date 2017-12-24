@@ -193,7 +193,7 @@ public class MyViewModel{
 		System.out.println(event.getName());
 //		waitFor10Sec.open(0,0);
 		System.out.println(Sessions.getCurrent());
-		this.executorService.execute(new WaitXSecond(this.xSecondEvtQue));
+		this.executorService.execute(new WaitXSecond(this.xSecondEvtQue, this.desktop));
 		this.executorService.execute(new InsertArticle(new Button(), this.xSecondEvtQue, this.insertNewArticleEvtQue, this.undoInsertEvtQue,this.desktop));
 		//createNewArticle();
 //		ckarticleEditor.close();

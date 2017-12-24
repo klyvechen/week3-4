@@ -45,6 +45,7 @@ public class InsertArticle implements Runnable {
         	Executions.activate(this.desktop); 
         	this.xSecondEvtQue.subscribe(this.xSecondEventListener);
         	this.undoInsertEvtQue.subscribe(undoInsertEventListener);
+        	Executions.deactivate(this.desktop);	 
         	System.out.println("insert article ok");
             
         } catch (DesktopUnavailableException e) {
@@ -57,5 +58,6 @@ public class InsertArticle implements Runnable {
     public void unsubscribeEvt(){
     	insertNewArticleEvtQue.unsubscribe(xSecondEventListener);
     	undoInsertEvtQue.unsubscribe(undoInsertEventListener);
+    	
     }
 }

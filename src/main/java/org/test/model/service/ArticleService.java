@@ -85,7 +85,7 @@ public class ArticleService {
 		session.getTransaction().commit();		
 		for(int i = 0; i< articlelist.size();i++){
 			Article at = articlelist.get(i);
-			if(at.getTitle().equals("")){
+			if((at.getTitle()!=null)&&at.getTitle().equals("")){
 				at.setTitle("為推文 沒有標題");
 			}
 		}
