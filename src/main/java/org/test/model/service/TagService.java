@@ -7,12 +7,11 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.test.hibernate.util.HibernateUtil;
 import org.test.model.Tag;
-import org.test.model.User;
 
 public class TagService {
 	private static final String GET_ALL_TAGS = "select * from Tag";
 	private static final String GET_TAGS_BY_ARTID = "select * from Tag t join tagDetail td on t.tagId = td.tagId  where td.articleId = :articleId`";
-	public List<Tag> getAllTag(String username) {
+	public List<Tag> getAllTag() {
 		List<Tag> tl = new ArrayList<Tag>();
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();

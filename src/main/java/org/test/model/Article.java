@@ -1,19 +1,22 @@
 package org.test.model;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.LinkedList;
+import java.util.List;
 
 
-public class Article implements Cloneable {
-	Integer articleId; //primary key
-	Integer parentId;
-	Integer rootId;
-	Integer userId;
-	String title;
-	String content;
-	Integer tagId;
-	Date date;
-	Time time;
+public class Article implements Cloneable,  Serializable {
+	private Integer articleId; //primary key
+	private Integer parentId;
+	private Integer rootId;
+	private Integer userId;
+	private String title;
+	private String content;
+	private Date date;
+	private Time time;
+	private List<Article> children = new LinkedList<Article>();
 	public Article(){
 		this.title = "default title";
 		this.content = "default content";
@@ -55,12 +58,7 @@ public class Article implements Cloneable {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public Integer getTagId() {
-		return tagId;
-	}
-	public void setTagId(Integer tagId) {
-		this.tagId = tagId;
-	}
+	
 	public Date getDate() {
 		return date;
 	}
@@ -72,6 +70,14 @@ public class Article implements Cloneable {
 	}
 	public void setTime(Time time) {
 		this.time = time;
+	}
+	
+	public void setChildren(List<Article> children){
+		this.children = children;
+	}
+	
+	public List<Article> getChildren(){
+		return this.children;
 	}
 	
 	@Override

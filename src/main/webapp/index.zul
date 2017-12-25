@@ -1,3 +1,4 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
 <zk xmlns:n="native" xmlns:w="client">
 	<window apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm')@init('org.test.mvvm.MyViewModel')"
@@ -5,14 +6,14 @@
 		
 		<hlayout>
 			
-				LOGIN
+				${c:l('LOGIN')}
 				<textbox value="@save(vm.loginUser.username)"/>
 	            <textbox value=" @save(vm.loginUser.password)"  type="password"/>            
-	            <button label="login" onClick="@command('AuthenticateUser')"/>
-	           	REGISTER
+	            <button label="${c:l('LOGIN')}" onClick="@command('AuthenticateUser')"/>
+	           	${labels.REGISTER}
 	            <textbox value="@save(vm.regUser.username)"/>
 	            <textbox value=" @save(vm.regUser.password)"  type="password"/>            
-	            <button label="Register" onClick="@command('registUser')"/>
+	            <button label="${labels.REGISTER}" onClick="@command('registUser')"/>
             
         </hlayout>
 		<hbox>
@@ -24,7 +25,7 @@
 				<div>
 					<listbox  height="400px" model="@load(vm.lastest10Article)"> 
 						<listhead>
-							<listheader label="Newest 10 article"
+							<listheader label="${labels.lastest10Article}"
 								sort="auto" />
 						</listhead>
 						<template name="model" var="article">
@@ -44,7 +45,7 @@
 				<div>
 					<listbox  height="400px" model="@load(vm.lastest10Reply)"> 
 						<listhead>
-							<listheader label="Newest 10 Reply"
+							<listheader label="${labels.lastest10Reply}"
 								sort="auto" />
 						</listhead>
 						<template name="model" var="reply">
@@ -64,7 +65,7 @@
 				<div>
 					<listbox  height="400px" model="@load(vm.lastest10UserArticle)"> 
 						<listhead>
-							<listheader label="Newest 10 My Article"
+							<listheader label="${labels.lastest10myArticle}"
 								sort="auto" />
 						</listhead>
 						<template name="model" var="myArticle">
@@ -81,7 +82,7 @@
 				</div>
 			</vbox>
 		</hbox>
-		<button label="New Article" onClick=""
+		<button label="${c:l('newArticle')}" onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chklist=checkboxlist)"
 			popup="ckarticleEditor" />
 			
 		<div width="100px" height="100px" >
@@ -90,8 +91,9 @@
 		</div>
 		<tabbox width="100%" sclass="nav_tabs">
 			<tabs id="tabs">
-				<tab label="List Model" onSelect="" />
-				<tab label="Tree Model" onSelect="" />
+				<tab label="${labels.ListModel}" onSelect="" />
+				<tab label="${labels.TreeModel}" onSelect="" />
+				<tab label="${labels.TreeModel}" onSelect="" />
 			</tabs>
 
 			<tabpanels>
@@ -101,11 +103,11 @@
 				        multiple="true" itemRenderer="org.test.mvvm.ArticleListGroupRender">
 				        <custom-attributes org.zkoss.zul.listbox.groupSelect="true" />
 				        <listhead>        
-				            <listheader width="300px" label="Title" />
-				            <listheader label="Content"/>
-				            <listheader width="100px" label="reply" />
-				            <listheader width="100px" label="edit"/>			
-				            <listheader width="100px" label="delete" />
+				            <listheader width="300px" label="${labels.title}" />
+				            <listheader label="${labels.content}"/>
+				            <listheader width="100px" label="${labels.reply}" />
+				            <listheader width="100px" label="${labels.edit}"/>			
+				            <listheader width="100px" label="${labels.delete}" />
 				        </listhead>    
 				        <template name="model" var="article">
 			                <listitem>
@@ -114,6 +116,20 @@
 			            </template>   
 				    </listbox>
 				     </div>
+				</tabpanel>
+				<tabpanel>
+				<tree id="articleTree" model="@load(vm.allArticles)" >
+					<treecols>
+						<treecol hflex="1" label="title" />
+					</treecols>					
+					<template name="model" var="comp">
+						<treeitem>
+							<treerow>
+								<treecell label="@load(comp.title)" />
+							</treerow>
+						</treeitem>
+					</template>
+					</tree>
 				</tabpanel>
 				<tabpanel>
 					<groupbox id="grp" closable="false" mold='3d'
@@ -144,11 +160,16 @@
 		<popup id="ckarticleEditor">
 			<vlayout>
 				<hlayout>
-					TITLE:
+					${labels.title}
 					<textbox id="inputTitle" width="150px" tabindex="1" value="@save(vm.temparticle.title)" />
 				</hlayout>
-				<hlayout>
-					<template></template>
+				<hlayout id="checkboxlist">
+					<apply template="tagList" manuItems="@ref(vm.allTagList)"/>				
+					<template name="tagList">						
+						<forEach items="@load(vm.allTagList)">
+							<checkbox label="@load(each.tagContent)" name="@load(each.tagId)" onCheck=""/>
+						</forEach>
+					</template>					
 				</hlayout>
 				<n:form>
 					ckeditor
@@ -159,11 +180,11 @@
 						</attribute>
 					</ckeditor>
 				</n:form>
-				<button label="New article" onClick="@command('newArticle')" popup="waitFor10Sec"></button>
+				<button label="${labels.newArticle}" onClick="@command('newArticle')" popup="undoPopup"></button>
 			</vlayout>
 		</popup>
-		<popup id="waitFor10Sec">
-			<button id="undo" label="undo" onClick="@command('undoClick')"/>
+		<popup id="undoPopup">
+			<button id="undo" label="undo" onClick="@command('changeUndoFlag')"/>
 		</popup>
 		<popup id="replyEditor">
 			<vlayout>
@@ -176,7 +197,7 @@
 						</attribute>
 					</ckeditor>
 				</n:form>
-				<button label="New Reply" onClick="@command('newReply')" popup="waitFor10Sec"/>
+				<button label="${labels.reply}" onClick="@command('newReply')" popup="undoPopup"/>
 			</vlayout>
 		</popup>
 		<separator height="30px"></separator>		

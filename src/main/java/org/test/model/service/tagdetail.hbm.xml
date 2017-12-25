@@ -8,10 +8,10 @@
             <key-property name="articleId" column="articleId"></key-property>
             <key-property name="tagId" column="tagId" ></key-property>           
         </composite-id>
-        <set name="tagDetail" table="tag-detail" lazy="false" cascade="all" inverse="true">
+        <!-- <set name="tagDetail" table="tag-detail" lazy="false" cascade="all" inverse="true">
 			<key><column name="tagId"/></key>
 			<one-to-many class="org.test.model.TagDetail"/>
-		</set>   
+		</set> -->   
 	</class>
 </hibernate-mapping>
 

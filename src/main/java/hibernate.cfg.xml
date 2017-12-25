@@ -37,10 +37,10 @@
 		<!--photo 相關的映射表格 -->
 		<mapping resource="org/test/model/service/user.hbm.xml" />
 		<mapping resource="org/test/model/service/article.hbm.xml" />
-			<!--club 相關的映射表格 -->
-	<!-- 
 		<mapping resource="org/test/model/service/tag.hbm.xml" />
 		<mapping resource="org/test/model/service/tagdetail.hbm.xml" />
+			<!--club 相關的映射表格 -->
+	<!-- 
 		<mapping resource="com/iii/eeit9703/activity/model/activity.hbm.xml"/>
 		-->
 

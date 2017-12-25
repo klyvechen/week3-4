@@ -17,6 +17,9 @@ import org.zkoss.zul.ListitemRenderer;
 
 public class ArticleListGroupRender implements ListitemRenderer<Object> {
 	public void render(Listitem listitem, Object obj, int index) throws Exception {
+//		System.out.println("in ArticleListGroupRender");
+//		System.out.println(Sessions.getCurrent());
+//		System.out.println(Sessions.getCurrent().getAttribute("sessionUser"));
 		User theUser = (User) Sessions.getCurrent().getAttribute("sessionUser");
 		if (listitem instanceof Listgroup) {
 			ArticleGroupModel.ArticleGroupInfo groupInfo = (ArticleGroupModel.ArticleGroupInfo) obj;

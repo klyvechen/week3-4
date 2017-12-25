@@ -1,6 +1,8 @@
 package org.test.model;
 
-public class TagDetail {
+import java.io.Serializable;
+
+public class TagDetail implements Serializable {
 	Integer tagId;
 	Integer articleId;
 	public Integer getTagId() {

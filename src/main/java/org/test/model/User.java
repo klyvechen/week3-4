@@ -1,6 +1,8 @@
 package org.test.model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 	private Integer userid = 0; //primary key
 	private String username;
 	private String password;

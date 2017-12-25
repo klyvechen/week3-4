@@ -1,8 +1,17 @@
 package org.test.model;
 
-public class Tag {
+import java.io.Serializable;
+
+public class Tag implements Serializable{
 	Integer tagId;
 	String tagContent;
+	boolean isChecked = true;
+	public boolean getIsChecked() {
+		return isChecked;
+	}
+	public void setIsChecked(boolean isChecked) {
+		this.isChecked = isChecked;
+	}
 	public Integer getTagId() {
 		return tagId;
 	}

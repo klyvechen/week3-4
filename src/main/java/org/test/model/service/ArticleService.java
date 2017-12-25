@@ -95,16 +95,15 @@ public class ArticleService {
 	public void insertNewArticle(Article article){
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
-		
 		SQLQuery query = session.createSQLQuery(INSERT_NEW_ARTICLE);		
 		query.setParameter("articleId", ++tableIdentity);
+		article.setArticleId(tableIdentity);
 		query.setParameter("parentId", article.getParentId());
 		Integer rootId = (article.getRootId()!=null)?article.getRootId():tableIdentity;
 		query.setParameter("rootId", rootId);
 		query.setParameter("userId", article.getUserId());
 		query.setParameter("title", article.getTitle());
 		query.setParameter("content", article.getContent());
-		query.setParameter("tagId", article.getTagId());
 		query.setParameter("status", 1);
 		query.addEntity(User.class);
 		query.executeUpdate();
