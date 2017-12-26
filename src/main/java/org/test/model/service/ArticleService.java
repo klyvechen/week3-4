@@ -15,7 +15,9 @@ public class ArticleService {
 	private static final String GET_LATEST10_ARTICLE = "select top 10 * from article where parentid is null order by DATE desc, TIME desc";
 	private static final String GET_LATEST10_REPLY = "select top 10 * from article where parentid is not null order by DATE desc, TIME desc";
 	private static final String GET_LATEST10_USERS_ARTICLE = "select top 10 * from article  where userId = :userId order by DATE desc, TIME desc";
-	private static final String INSERT_NEW_ARTICLE = "insert into article values(:articleId, :parentId, :rootId, :userId, :title , :content, :tagId, CURRENT_DATE, CURRENT_TIME, :status)";
+	private static final String GET_CHILDREN_BY_PARENTID = "select * from article  where parentId = :parentId order by DATE desc, TIME desc";	
+	private static final String GET_PARENTID_IS_NULL = "select * from article  where parentId is null order by DATE desc, TIME desc";
+	private static final String INSERT_NEW_ARTICLE = "insert into article values(:articleId, :parentId, :rootId, :userId, :title , :content,  CURRENT_DATE, CURRENT_TIME, :status)";
 	private static final String UPDATE_ARTICLE = "update article set content = :content, title = :title where articleId = :articleId";
 	private static Integer tableIdentity = 0;
 	static{
@@ -80,6 +82,29 @@ public class ArticleService {
 		session.beginTransaction();
 		SQLQuery query = session.createSQLQuery(GET_LATEST10_USERS_ARTICLE);
 		query.setParameter("userId", userId);
+		query.addEntity(Article.class);
+		articlelist = query.list();
+		session.getTransaction().commit();		
+		for(int i = 0; i< articlelist.size();i++){
+			Article at = articlelist.get(i);
+			if((at.getTitle()!=null)&&at.getTitle().equals("")){
+				at.setTitle("為推文 沒有標題");
+			}
+		}
+		return articlelist;
+	}
+
+	public List<Article> getChildrenByParentId(Integer parentId){		
+		List<Article> articlelist = new ArrayList<Article>();
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		SQLQuery query;
+		if(parentId!=null){
+			query= session.createSQLQuery(GET_CHILDREN_BY_PARENTID);
+			query.setParameter("parentId", parentId);
+		}else{
+			query = session.createSQLQuery(GET_PARENTID_IS_NULL);
+		}
 		query.addEntity(Article.class);
 		articlelist = query.list();
 		session.getTransaction().commit();		

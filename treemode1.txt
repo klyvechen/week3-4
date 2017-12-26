@@ -1,0 +1,49 @@
+package org.test.model.mytree;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import org.test.model.Article;
+import org.test.model.service.ArticleService;
+import org.zkoss.zul.DefaultTreeNode;
+
+public class ArticleTreeNode extends DefaultTreeNode<Article> {
+    private static final long serialVersionUID = 1L;
+    private static ArticleService as = new ArticleService();
+    
+    public ArticleTreeNode(Article article){
+    	super(article);
+    }
+    
+    public ArticleTreeNode(Article article,String notLeft) {    	
+    	super(article, getArticleTreeNodeChildren(article)); // assume not a leaf-node
+		List<Article> children = as.getChildrenByParentId(article.getArticleId());
+		System.out.println("the children size is "+ children.size());
+    }
+    private static List<ArticleTreeNode> getArticleTreeNodeChildren(Article article){    	    	
+    	List<Article> children = as.getChildrenByParentId(article.getArticleId());
+    	System.out.println("children size is "+children.size());
+    	if(children.size() == 0){
+    		return null;
+    	}else{
+	    	List<ArticleTreeNode> childrenTreeNode = new LinkedList<ArticleTreeNode>();
+	    	for(int i = 0; i< children.size(); i++){
+				childrenTreeNode.add(new ArticleTreeNode(children.get(i),"not left"));
+			}
+	    	return childrenTreeNode;
+    	}
+    }
+    
+//    public ArticleTreeNode(Article article){
+//    	super(article);
+//    }    
+    
+    public String getTitle() {
+        return getData().getTitle();
+    }
+ 
+    public boolean isLeaf() {
+        return getData() != null && getData().getChildren().isEmpty();
+    }
+
+}

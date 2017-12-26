@@ -80,6 +80,14 @@ public class Article implements Cloneable,  Serializable {
 		return this.children;
 	}
 	
+	public void addChild(Article child){
+		children.add(child);
+	}
+	
+	public void removeChild(Article child){
+		children.remove(child);
+	}
+	
 	@Override
 	public Article clone() throws CloneNotSupportedException{
 		Article a = (Article) super.clone();		

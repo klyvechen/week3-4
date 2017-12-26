@@ -1,6 +1,4 @@
-package org.test.mvvm;
-
-import org.test.model.group.ArticleGroupingModel;
+package org.test.model.group;
 
 public class ArticleGroupViewModel {
 	private boolean showGroup = true;

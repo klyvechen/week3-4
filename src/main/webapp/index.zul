@@ -3,37 +3,42 @@
 	<window apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm')@init('org.test.mvvm.MyViewModel')"
 		validationMessages="@id('vmsgs')">
-		
+
 		<hlayout>
-			
-				${c:l('LOGIN')}
-				<textbox value="@save(vm.loginUser.username)"/>
-	            <textbox value=" @save(vm.loginUser.password)"  type="password"/>            
-	            <button label="${c:l('LOGIN')}" onClick="@command('AuthenticateUser')"/>
-	           	${labels.REGISTER}
-	            <textbox value="@save(vm.regUser.username)"/>
-	            <textbox value=" @save(vm.regUser.password)"  type="password"/>            
-	            <button label="${labels.REGISTER}" onClick="@command('registUser')"/>
-            
-        </hlayout>
+
+			${c:l('LOGIN')}
+			<textbox value="@save(vm.loginUser.username)" />
+			<textbox value=" @save(vm.loginUser.password)"
+				type="password" />
+			<button label="${c:l('LOGIN')}"
+				onClick="@command('AuthenticateUser')" />
+			${labels.REGISTER}
+			<textbox value="@save(vm.regUser.username)" />
+			<textbox value=" @save(vm.regUser.password)"
+				type="password" />
+			<button label="${labels.REGISTER}"
+				onClick="@command('registUser')" />
+
+		</hlayout>
 		<hbox>
 			<vbox>
 				<!-- 
 					<div >
 					<listbox id="lastest10Article" height="100px" > 
-					-->
+				-->
 				<div>
-					<listbox  height="400px" model="@load(vm.lastest10Article)"> 
+					<listbox height="400px"
+						model="@load(vm.lastest10Article)">
 						<listhead>
-							<listheader label="${labels.lastest10Article}"
-								sort="auto" />
+							<listheader
+								label="${labels.lastest10Article}" sort="auto" />
 						</listhead>
 						<template name="model" var="article">
-			                <listitem>
-			                    <listcell label="@load(article.title)" />
-			                </listitem>
-			            </template>
-						
+							<listitem>
+								<listcell label="@load(article.title)" />
+							</listitem>
+						</template>
+
 					</listbox>
 					<style>
 						div.z-listbox-body .z-listcell { padding: 2px
@@ -43,17 +48,18 @@
 			</vbox>
 			<vbox>
 				<div>
-					<listbox  height="400px" model="@load(vm.lastest10Reply)"> 
+					<listbox height="400px"
+						model="@load(vm.lastest10Reply)">
 						<listhead>
 							<listheader label="${labels.lastest10Reply}"
 								sort="auto" />
 						</listhead>
 						<template name="model" var="reply">
-			                <listitem>
-			                    <listcell label="@load(reply.title)" />
-			                </listitem>
-			            </template>
-						
+							<listitem>
+								<listcell label="@load(reply.title)" />
+							</listitem>
+						</template>
+
 					</listbox>
 					<style>
 						div.z-listbox-body .z-listcell { padding: 2px
@@ -63,17 +69,19 @@
 			</vbox>
 			<vbox>
 				<div>
-					<listbox  height="400px" model="@load(vm.lastest10UserArticle)"> 
+					<listbox height="400px"
+						model="@load(vm.lastest10UserArticle)">
 						<listhead>
-							<listheader label="${labels.lastest10myArticle}"
-								sort="auto" />
+							<listheader
+								label="${labels.lastest10myArticle}" sort="auto" />
 						</listhead>
 						<template name="model" var="myArticle">
-			                <listitem>
-			                    <listcell label="@load(myArticle.title)" />
-			                </listitem>
-			            </template>
-						
+							<listitem>
+								<listcell
+									label="@load(myArticle.title)" />
+							</listitem>
+						</template>
+
 					</listbox>
 					<style>
 						div.z-listbox-body .z-listcell { padding: 2px
@@ -82,12 +90,13 @@
 				</div>
 			</vbox>
 		</hbox>
-		<button label="${c:l('newArticle')}" onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chklist=checkboxlist)"
+		<button label="${c:l('newArticle')}"
+			onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chklist=checkboxlist)"
 			popup="ckarticleEditor" />
-			
-		<div width="100px" height="100px" >
-			<textbox value="@load(vm.temparticle.title)"/>
-			<textbox value="@load(vm.temparticle.content)"/>
+
+		<div width="100px" height="100px">
+			<textbox value="@load(vm.temparticle.title)" />
+			<textbox value="@load(vm.temparticle.content)" />
 		</div>
 		<tabbox width="100%" sclass="nav_tabs">
 			<tabs id="tabs">
@@ -98,62 +107,60 @@
 
 			<tabpanels>
 				<tabpanel>
-				 <div>
-					 <listbox model="@load(vm.groupModel)" height="1000px"
-				        multiple="true" itemRenderer="org.test.mvvm.ArticleListGroupRender">
-				        <custom-attributes org.zkoss.zul.listbox.groupSelect="true" />
-				        <listhead>        
-				            <listheader width="300px" label="${labels.title}" />
-				            <listheader label="${labels.content}"/>
-				            <listheader width="100px" label="${labels.reply}" />
-				            <listheader width="100px" label="${labels.edit}"/>			
-				            <listheader width="100px" label="${labels.delete}" />
-				        </listhead>    
-				        <template name="model" var="article">
-			                <listitem>
-			                    <listcell label="@load(article.title)" />
-			                </listitem>
-			            </template>   
-				    </listbox>
-				     </div>
+					<div>
+						<listbox model="@load(vm.groupModel)"
+							height="1000px" multiple="true"
+							itemRenderer="org.test.model.group.ArticleListGroupRender">
+							<custom-attributes
+								org.zkoss.zul.listbox.groupSelect="true" />
+							<listhead>
+								<listheader width="300px"
+									label="${labels.title}" />
+								<listheader label="${labels.content}" />
+								<listheader width="100px"
+									label="${labels.reply}" />
+								<listheader width="100px"
+									label="${labels.edit}" />
+								<listheader width="100px"
+									label="${labels.delete}" />
+							</listhead>
+							<template name="model" var="article">
+								<listitem>
+									<listcell
+										label="@load(article.title)" />
+								</listitem>
+							</template>
+						</listbox>
+					</div>
 				</tabpanel>
 				<tabpanel>
-				<tree id="articleTree" model="@load(vm.allArticles)" >
-					<treecols>
-						<treecol hflex="1" label="title" />
-					</treecols>					
-					<template name="model" var="comp">
-						<treeitem>
-							<treerow>
-								<treecell label="@load(comp.title)" />
-							</treerow>
-						</treeitem>
-					</template>
-					</tree>
-				</tabpanel>
-				<tabpanel>
-					<groupbox id="grp" closable="false" mold='3d'
-						 apply="org.test.model.tree.BinaryPackageController">
-						<caption label="ZK Binary Package" />
-						<tree id="tree" hflex="1"
-							model="${grp$composer.treeModel}">
+					<hlayout>
+						<tree id="articleTree"  hflex="1" height="600px"
+							model="@load(vm.myArticleTreeModel)" selectedItem="@bind(vm.pickedTreeItem)">
 							<treecols>
-								<treecol hflex="1" label="Path" />
-								<treecol hflex="1" label="Description" />
-								<treecol width="100px" label="Size" />
+								<treecol hflex="1" label="title" />
 							</treecols>
-							<template name="model">
+							<template name="model" var="comp">
 								<treeitem>
 									<treerow>
 										<treecell
-											label="${each.data.path}" />
-										<treecell
-											label="${each.data.description}" />
+											label="@load(comp.title)" />
 									</treerow>
 								</treeitem>
 							</template>
 						</tree>
-					</groupbox>
+						<div hflex="2" vflex="1">
+							<hlayout>
+
+								<button id="replybtn" label="reply"/>
+
+								<button id="editbtn" label="edit"/>
+								<button id="deletebtn" label="delete"/>
+							</hlayout>						
+						<label id="articleContent" value="@load(vm.selectedArticleContent)" hflex="1" vflex="1"/>
+						</div>
+					</hlayout>
+					
 				</tabpanel>
 			</tabpanels>
 		</tabbox>
@@ -161,30 +168,38 @@
 			<vlayout>
 				<hlayout>
 					${labels.title}
-					<textbox id="inputTitle" width="150px" tabindex="1" value="@save(vm.temparticle.title)" />
+					<textbox id="inputTitle" width="150px" tabindex="1"
+						value="@save(vm.temparticle.title)" />
 				</hlayout>
 				<hlayout id="checkboxlist">
-					<apply template="tagList" manuItems="@ref(vm.allTagList)"/>				
-					<template name="tagList">						
+					<apply template="tagList"
+						manuItems="@ref(vm.allTagList)" />
+					<template name="tagList">
 						<forEach items="@load(vm.allTagList)">
-							<checkbox label="@load(each.tagContent)" name="@load(each.tagId)" onCheck=""/>
+							<checkbox label="@load(each.tagContent)"
+								name="@load(each.tagId)" onCheck="" />
 						</forEach>
-					</template>					
+					</template>
 				</hlayout>
 				<n:form>
 					ckeditor
 					<ckeditor id="htmlEditor" width="850px"
 						value="@save(vm.temparticle.content)">
 						<attribute name="value">
+							
 							<![CDATA[ please type here ]]>
+							
 						</attribute>
 					</ckeditor>
 				</n:form>
-				<button label="${labels.newArticle}" onClick="@command('newArticle')" popup="undoPopup"></button>
+				<button label="${labels.newArticle}"
+					onClick="@command('newArticle')" popup="undoPopup">
+				</button>
 			</vlayout>
 		</popup>
 		<popup id="undoPopup">
-			<button id="undo" label="undo" onClick="@command('changeUndoFlag')"/>
+			<button id="undo" label="undo"
+				onClick="@command('changeUndoFlag')" />
 		</popup>
 		<popup id="replyEditor">
 			<vlayout>
@@ -193,18 +208,17 @@
 					<ckeditor id="ckreplyEditor" width="850px"
 						value="@save(vm.temparticle.content)">
 						<attribute name="value">
+							
 							<![CDATA[ please type here ]]>
+							
 						</attribute>
 					</ckeditor>
 				</n:form>
-				<button label="${labels.reply}" onClick="@command('newReply')" popup="undoPopup"/>
+				<button label="${labels.reply}"
+					onClick="@command('newReply')" popup="undoPopup" />
 			</vlayout>
 		</popup>
-		<separator height="30px"></separator>		
+		<separator height="30px"></separator>
 	</window>
-	<script>
-		function setReplyParameter(e){
-			console.log(e);
-		}
-	</script>
+	<script>function setReplyParameter(e){ console.log(e); }</script>
 </zk>

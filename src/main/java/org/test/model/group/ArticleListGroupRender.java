@@ -1,8 +1,7 @@
-package org.test.mvvm;
+package org.test.model.group;
 
 import org.test.model.Article;
 import org.test.model.User;
-import org.test.model.group.ArticleGroupModel;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;

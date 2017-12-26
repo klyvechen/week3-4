@@ -15,13 +15,14 @@ import org.test.model.TempArticle;
 import org.test.model.User;
 import org.test.model.group.ArticleComparator;
 import org.test.model.group.ArticleGroupModel;
+import org.test.model.mytree.ArticleDataUtil;
+import org.test.model.mytree.ArticleTreeModel;
+import org.test.model.mytree.ArticleTreeNode;
 import org.test.model.service.ArticleService;
 import org.test.model.service.AuthenService;
 import org.test.model.service.TagDetailService;
 import org.test.model.service.TagService;
 import org.test.model.service.UserService;
-import org.test.model.tree.PackageData;
-import org.test.model.tree.PackageDataUtil;
 import org.test.myevent.SampleExecutorHolder;
 import org.test.thread.insertAfter5Sec;
 import org.zkoss.bind.BindContext;
@@ -42,10 +43,8 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.DefaultTreeModel;
 import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Popup;
-import org.zkoss.zul.TreeModel;
 import org.zkoss.zul.TreeNode;
 
 public class MyViewModel{
@@ -56,28 +55,28 @@ public class MyViewModel{
 	private List<Article> allArticles;
 	private List<Tag> allTagList;
 	private ArticleGroupModel groupModel;
+	private ArticleTreeModel myArticleTreeModel;
+	private TreeNode<Article> rootArticle;
+	private ArticleTreeNode pickedTreeItem;
 	private TempArticle tempArticle= new TempArticle();
 	private User loginUser = new User();
 	private User regUser = new User();
 	private User theUser = new User();
 	private Session sess;
-	private UserCre uc;
-	private SampleExecutorHolder seh = new SampleExecutorHolder();
+	private UserCre uc;	
 	private org.zkoss.zk.ui.event.EventQueue<Event> xSecondEvtQue = EventQueues.lookup("count to x second", EventQueues.APPLICATION,true);   
 	private org.zkoss.zk.ui.event.EventQueue<Event> insertNewArticleEvtQue = EventQueues.lookup("insertNewArticle", EventQueues.APPLICATION,true);
 	private org.zkoss.zk.ui.event.EventQueue<Event> undoInsertEvtQue = EventQueues.lookup("undo insert Article", EventQueues.APPLICATION,true);
 	private org.zkoss.zk.ui.event.EventQueue<Event> insertAfter5 = EventQueues.lookup("insertAfter5", EventQueues.APPLICATION,true);
 	private ExecutorService executorService;
 	private Desktop desktop = Executions.getCurrent().getDesktop();
-	private Boolean undoFlag = Boolean.FALSE;
+	private boolean undoFlag = false;
 	private Popup popup1 , popup2;
 	private Hlayout  checkboxlist;
 	private List<Checkbox> checkboxlis22t;
-	@Wire("#undo")
+	private String selectedArticleContent = "please select content";
 	Button undo;
-	@Wire("#ckarticleEditor")
 	Popup ckarticleEditor;
-	@Wire("#waitFor10Sec")
 	Popup waitFor10Sec;
 
 	UserService us = new UserService();
@@ -89,6 +88,7 @@ public class MyViewModel{
     public void init() {
     	//SampleExecutorHolder seh = new SampleExecutorHolder();
     	PropertyConfigurator.configure("log4j.properties");
+    	SampleExecutorHolder seh = new SampleExecutorHolder();
     	logger = Logger.getLogger(MyViewModel.class);
     	HibernateUtil.getSessionFactory();
     	as = new ArticleService();
@@ -109,16 +109,55 @@ public class MyViewModel{
     		sess.setAttribute("userCre", uc);
     	}
     	executorService = SampleExecutorHolder.getExecutor();
-    	queSubScribe();
+    	//queSubScribe();
 		this.insertAfter5.subscribe(new EventListener(){
 			public void onEvent(Event evt){
 				System.out.println(evt.getName());
-				insertArticle();			
+				if(evt.getData() == getSess()){					
+					insertArticle();			
+				}
+				notifiyToAll();
 			}
 		});
+		this.rootArticle = ArticleDataUtil.getRoot();
+		this.myArticleTreeModel= new ArticleTreeModel(this.rootArticle);
+		System.out.println(this.myArticleTreeModel);
     }
+	public ArticleTreeNode getPickedTreeItem() {
+		return pickedTreeItem;
+	}
+	@NotifyChange("selectedArticleContent")
+	public void setPickedTreeItem(ArticleTreeNode pickedTreeItem) {
+		System.out.print("the pickedTreeItem is ");
+		System.out.println(pickedTreeItem);
+		this.pickedTreeItem = pickedTreeItem;
+		this.setSelectedArticleContent(pickedTreeItem.getData().getContent());
+	}
+	public Session getSess() {
+		return sess;
+	}
+	public void setSess(Session sess) {
+		this.sess = sess;
+	}
 
-    public List<Article> getAllArticles() {
+    
+	public String getSelectedArticleContent() {
+		return selectedArticleContent;
+	}
+
+	public void setSelectedArticleContent(String selectedArticleContent) {
+		this.selectedArticleContent = selectedArticleContent;
+	}
+
+    public ArticleTreeModel getMyArticleTreeModel() {
+		return myArticleTreeModel;
+	}
+
+	public void setMyArticleTreeModel(ArticleTreeModel myArticleTreeModel) {
+		this.myArticleTreeModel = myArticleTreeModel;
+	}
+
+	public List<Article> getAllArticles() {
 		return allArticles;
 	}
 
@@ -253,28 +292,28 @@ public class MyViewModel{
 	}
 	
 	@Command
-	public void newArticle(@ContextParam(ContextType.BIND_CONTEXT) BindContext ctx) throws CloneNotSupportedException{
+	public void newArticle() throws CloneNotSupportedException{
 		System.out.println("new Article dosomething");
-		Event event = ctx.getTriggerEvent();
-		System.out.println(event.getName());
+		//Event event = ctx.getTriggerEvent();
+		//System.out.println(event.getName());
 		System.out.println("print session");
 		System.out.println(Sessions.getCurrent());		
-		this.executorService.execute(new insertAfter5Sec(this.insertAfter5, this.desktop));
+		this.executorService.execute(new insertAfter5Sec(this.insertAfter5, this.desktop, this.sess));
 		//this.executorService.execute(new WaitXSecond(this.xSecondEvtQue, this.desktop));
 		//this.executorService.execute(new InsertArticle(new Button(), this.xSecondEvtQue, this.insertNewArticleEvtQue, this.undoInsertEvtQue,this.desktop));
-		System.out.println(Sessions.getCurrent());
+		//System.out.println(Sessions.getCurrent());
 		
 		//createNewArticle();
 	}
 	
 	private void insertArticle(){
-		if(this.undoFlag.equals(Boolean.FALSE)){
-			//createNewArticle();
-			//notifiyToAll();
+		if(this.undoFlag== false){
+			createNewArticle();
+
 			this.popup2.close();
 			this.popup1.close();
 		}else{
-			this.undoFlag = Boolean.FALSE;
+			this.undoFlag = false;
 		}
 	}
 	
@@ -282,7 +321,7 @@ public class MyViewModel{
 	@Command
 	public void changeUndoFlag(){
 		System.out.println("undo inser article");
-		this.undoFlag = Boolean.TRUE;
+		this.undoFlag = true;
 		this.popup2.close();
 	}
 	
@@ -311,8 +350,7 @@ public class MyViewModel{
     public void queSubScribe(){
     	insertNewArticleEvtQue.subscribe(new EventListener(){    		
     		public void onEvent(Event evt){
-    			createNewArticle();
-    			notifiyToAll();	
+
     		}
     	});
     }
@@ -349,20 +387,12 @@ public class MyViewModel{
     	}
     }
     
-	@Command
-	public void save(){
-	
-	}
-		
 	/***start to insert update data***/
 	
 	public void insertArticle(Article article){	
 		as.insertNewArticle(article);
 	}
 	
-	
-	public TreeModel<TreeNode<PackageData>> getTreeModel() {
-        return new DefaultTreeModel<PackageData>(PackageDataUtil.getRoot());
-    }
+
 	
 }

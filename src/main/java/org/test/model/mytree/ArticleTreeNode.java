@@ -1,30 +1,31 @@
 package org.test.model.mytree;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.test.model.Article;
+import org.test.model.service.ArticleService;
 import org.zkoss.zul.DefaultTreeNode;
-import org.zkoss.zul.TreeNode;
 
 public class ArticleTreeNode extends DefaultTreeNode<Article> {
     private static final long serialVersionUID = 1L;
-    int count;
- 
-    public ArticleTreeNode(Article article, int count) {
-        super(article, new LinkedList<TreeNode<Article>>()); // assume not a leaf-node
-        this.count = count;
+    private ArticleService as = new ArticleService();
+    
+    public ArticleTreeNode(Article article, List<ArticleTreeNode> nulllist) {
+    	super(article, new LinkedList<ArticleTreeNode>()); // assume not a leaf-node
     }
- 
-    public String getDescription() {
-        return getData().getDescription();
+    
+    public ArticleTreeNode(Article article){
+    	super(article);
     }
- 
-    public int getCount() {
-        return count;
+    
+    public ArticleTreeNode(Article article, List<ArticleTreeNode>children, boolean buildBySelf){    	
+    	super(article, children);
     }
- 
-    public boolean isLeaf() {
-        return getData() != null && getData().getChildren().isEmpty();
+    
+    public String getTitle() {
+        return getData().getTitle();
     }
+
 
 }
