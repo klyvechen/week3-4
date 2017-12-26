@@ -19,6 +19,8 @@ public class ArticleService {
 	private static final String GET_PARENTID_IS_NULL = "select * from article  where parentId is null order by DATE desc, TIME desc";
 	private static final String INSERT_NEW_ARTICLE = "insert into article values(:articleId, :parentId, :rootId, :userId, :title , :content,  CURRENT_DATE, CURRENT_TIME, :status)";
 	private static final String UPDATE_ARTICLE = "update article set content = :content, title = :title where articleId = :articleId";
+	private static final String DELETE_ARTICLE = "update article set status = :status  where articleId = :articleId";
+	private static final String RECOVER_ALL = "update article set status = 1";
 	private static Integer tableIdentity = 0;
 	static{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -29,7 +31,7 @@ public class ArticleService {
 		tableIdentity = (u!= null)? u.getArticleId(): 0;
 		session.getTransaction().commit();		
 	}
-	
+
 	public List<Article> getAllArticles(){
 		System.out.println("in the get lastest10Article");
 		List<Article> articlelist = new ArrayList<Article>();
@@ -134,8 +136,34 @@ public class ArticleService {
 		query.executeUpdate();
 		session.getTransaction().commit();
 	}
-	public void deleteArticle(Article article){
-		
+	
+	public void deleteArticleAndChildren(Article article){
+		List<Article> articleList = new ArrayList();
+		articleList.add(article);		
+		for(int i = 0; i< articleList.size();i++){
+			Article thisArticle = articleList.get(i);
+			deleteArticle(thisArticle);
+			articleList.addAll(getChildrenByParentId(article.getArticleId()));
+		}
+	}
+	
+	public void deleteArticle(Article article){		
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		SQLQuery query = session.createSQLQuery(DELETE_ARTICLE);		
+		query.setParameter("status", 0);
+		query.setParameter("articleId", 1);
+		query.addEntity(User.class);
+		query.executeUpdate();
+		session.getTransaction().commit();		
+	}
+	
+	public void recoverAllArticle(){
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		SQLQuery query = session.createSQLQuery(RECOVER_ALL);		
+		query.executeUpdate();
+		session.getTransaction().commit();		
 	}
 	
 	public void updateArticle(Article article){
@@ -149,10 +177,6 @@ public class ArticleService {
 		query.addEntity(User.class);
 		query.executeUpdate();
 		session.getTransaction().commit();
-	}
-	
-	public void deleteArticle(){
-		
 	}
 	
 	public static void main(String[] args){

@@ -1,25 +1,12 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+<?page title="welcome" contentType="text/html;charset=UTF-8"?>
 <zk xmlns:n="native" xmlns:w="client">
 	<window apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm')@init('org.test.mvvm.MyViewModel')"
 		validationMessages="@id('vmsgs')">
-
-		<hlayout>
-
-			${c:l('LOGIN')}
-			<textbox value="@save(vm.loginUser.username)" />
-			<textbox value=" @save(vm.loginUser.password)"
-				type="password" />
-			<button label="${c:l('LOGIN')}"
-				onClick="@command('AuthenticateUser')" />
-			${labels.REGISTER}
-			<textbox value="@save(vm.regUser.username)" />
-			<textbox value=" @save(vm.regUser.password)"
-				type="password" />
-			<button label="${labels.REGISTER}"
-				onClick="@command('registUser')" />
-
-		</hlayout>
+		<vbox>
+			<button label="${c:l('LOGOUT')}"  onClick="@command('logout')"/>			
+		</vbox>
 		<hbox>
 			<vbox>
 				<!-- 
@@ -91,13 +78,9 @@
 			</vbox>
 		</hbox>
 		<button label="${c:l('newArticle')}"
-			onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chklist=checkboxlist)"
+			onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chklist=checkboxlist,action=0)"
 			popup="ckarticleEditor" />
-
-		<div width="100px" height="100px">
-			<textbox value="@load(vm.temparticle.title)" />
-			<textbox value="@load(vm.temparticle.content)" />
-		</div>
+		
 		<tabbox width="100%" sclass="nav_tabs">
 			<tabs id="tabs">
 				<tab label="${labels.ListModel}" onSelect="" />
@@ -135,8 +118,9 @@
 				</tabpanel>
 				<tabpanel>
 					<hlayout>
-						<tree id="articleTree"  hflex="1" height="600px"
-							model="@load(vm.myArticleTreeModel)" selectedItem="@bind(vm.pickedTreeItem)">
+						<tree id="articleTree" hflex="1" height="600px"
+							model="@load(vm.myArticleTreeModel)"
+							selectedItem="@bind(vm.pickedTreeItem)">
 							<treecols>
 								<treecol hflex="1" label="title" />
 							</treecols>
@@ -151,16 +135,14 @@
 						</tree>
 						<div hflex="2" vflex="1">
 							<hlayout>
-
-								<button id="replybtn" label="reply"/>
-
-								<button id="editbtn" label="edit"/>
-								<button id="deletebtn" label="delete"/>
-							</hlayout>						
-						<label id="articleContent" value="@load(vm.selectedArticleContent)" hflex="1" vflex="1"/>
+								<button id="replybtn" label="reply"  popup="ckarticleEditor" onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chklist=checkboxlist,action=1)"/>
+								<button id="editbtn" label="edit" popup="ckarticleEditor" onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chklist=checkboxlist,action=2)"/>
+								<button id="deletebtn" label="delete" onClick="@command('delete')"/>
+							</hlayout>
+							<label id="articleContent"
+								value="@load(vm.selectedArticleContent)" hflex="1" vflex="1" />
 						</div>
 					</hlayout>
-					
 				</tabpanel>
 			</tabpanels>
 		</tabbox>
@@ -168,8 +150,8 @@
 			<vlayout>
 				<hlayout>
 					${labels.title}
-					<textbox id="inputTitle" width="150px" tabindex="1"
-						value="@save(vm.temparticle.title)" />
+					<textbox id="inputTitle" width="750px" tabindex="1"
+						value="@bind(vm.tempArticle.title)" />
 				</hlayout>
 				<hlayout id="checkboxlist">
 					<apply template="tagList"
@@ -184,16 +166,18 @@
 				<n:form>
 					ckeditor
 					<ckeditor id="htmlEditor" width="850px"
-						value="@save(vm.temparticle.content)">
+						value="@bind(vm.tempArticle.content)">
 						<attribute name="value">
+
 							
 							<![CDATA[ please type here ]]>
+							
 							
 						</attribute>
 					</ckeditor>
 				</n:form>
 				<button label="${labels.newArticle}"
-					onClick="@command('newArticle')" popup="undoPopup">
+					onClick="@command('confirmArticle')" popup="undoPopup">
 				</button>
 			</vlayout>
 		</popup>
@@ -201,15 +185,20 @@
 			<button id="undo" label="undo"
 				onClick="@command('changeUndoFlag')" />
 		</popup>
+		<popup id="undoConfirmPopup">
+		</popup>
+		<!-- 
 		<popup id="replyEditor">
 			<vlayout>
 				<n:form>
 					reply
 					<ckeditor id="ckreplyEditor" width="850px"
-						value="@save(vm.temparticle.content)">
+						value="@save(vm.tempArticle.content)">
 						<attribute name="value">
+
 							
 							<![CDATA[ please type here ]]>
+							
 							
 						</attribute>
 					</ckeditor>
@@ -218,6 +207,7 @@
 					onClick="@command('newReply')" popup="undoPopup" />
 			</vlayout>
 		</popup>
+		 -->
 		<separator height="30px"></separator>
 	</window>
 	<script>function setReplyParameter(e){ console.log(e); }</script>
