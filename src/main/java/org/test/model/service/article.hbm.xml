@@ -13,7 +13,9 @@
 		<property name="rootId" column="rootId" />
 		<property name="userId" column="userId" />
 		<property name="content" column="content" />
-		<property name="title" column="title" />		
+		<property name="title" column="title" />
+		<property name="date" column="date" />				
+		<property name="time" column="time" />
 		
 		<!-- <property name="clubPic" column="clubPic" /> 
 		

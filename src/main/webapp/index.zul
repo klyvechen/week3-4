@@ -78,7 +78,7 @@
 			</vbox>
 		</hbox>
 		<button label="${c:l('newArticle')}"
-			onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chklist=checkboxlist,action=0)"
+			onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=0)"
 			popup="ckarticleEditor" />
 		
 		<tabbox width="100%" sclass="nav_tabs">
@@ -118,29 +118,38 @@
 				</tabpanel>
 				<tabpanel>
 					<hlayout>
-						<tree id="articleTree" hflex="1" height="600px"
+						<tree id="articleTree" hflex="2" height="600px"
 							model="@load(vm.myArticleTreeModel)"
 							selectedItem="@bind(vm.pickedTreeItem)">
 							<treecols>
 								<treecol hflex="1" label="title" />
+								<treecol hflex="1" label="date" />
 							</treecols>
 							<template name="model" var="comp">
 								<treeitem>
 									<treerow>
 										<treecell
 											label="@load(comp.title)" />
+											<treecell
+											label="@load(comp.date)" />
 									</treerow>
 								</treeitem>
 							</template>
 						</tree>
-						<div hflex="2" vflex="1">
+						<div hflex="3" vflex="1">
 							<hlayout>
-								<button id="replybtn" label="reply"  popup="ckarticleEditor" onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chklist=checkboxlist,action=1)"/>
-								<button id="editbtn" label="edit" popup="ckarticleEditor" onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chklist=checkboxlist,action=2)"/>
+								<button id="replybtn" label="reply"  popup="ckarticleEditor" onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=1)"/>
+								<button id="editbtn" label="edit" popup="ckarticleEditor" onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=2)"/>
 								<button id="deletebtn" label="delete" onClick="@command('delete')"/>
 							</hlayout>
+							<html content="@load(vm.tempArticle.content)">
+							<![CDATA[ 
+							         ]]>
+							</html>
+							<!-- 
 							<label id="articleContent"
-								value="@load(vm.selectedArticleContent)" hflex="1" vflex="1" />
+								value="@load(vm.tempArticle.content)" hflex="1" vflex="1" />
+								 -->
 						</div>
 					</hlayout>
 				</tabpanel>
@@ -153,61 +162,28 @@
 					<textbox id="inputTitle" width="750px" tabindex="1"
 						value="@bind(vm.tempArticle.title)" />
 				</hlayout>
-				<hlayout id="checkboxlist">
-					<apply template="tagList"
-						manuItems="@ref(vm.allTagList)" />
-					<template name="tagList">
-						<forEach items="@load(vm.allTagList)">
-							<checkbox label="@load(each.tagContent)"
-								name="@load(each.tagId)" onCheck="" />
-						</forEach>
-					</template>
-				</hlayout>
+				<chosenbox id="chbox" width="440px" model="${vm.chosenboxModel}" creatable="true" selectedItems="@bind(vm.pickedChosenboxItem)" />
 				<n:form>
 					ckeditor
 					<ckeditor id="htmlEditor" width="850px"
 						value="@bind(vm.tempArticle.content)">
 						<attribute name="value">
-
-							
 							<![CDATA[ please type here ]]>
-							
-							
 						</attribute>
 					</ckeditor>
 				</n:form>
-				<button label="${labels.newArticle}"
+				<button label="${labels.confirm}"
 					onClick="@command('confirmArticle')" popup="undoPopup">
 				</button>
 			</vlayout>
 		</popup>
 		<popup id="undoPopup">
+			處理中...
 			<button id="undo" label="undo"
 				onClick="@command('changeUndoFlag')" />
 		</popup>
 		<popup id="undoConfirmPopup">
 		</popup>
-		<!-- 
-		<popup id="replyEditor">
-			<vlayout>
-				<n:form>
-					reply
-					<ckeditor id="ckreplyEditor" width="850px"
-						value="@save(vm.tempArticle.content)">
-						<attribute name="value">
-
-							
-							<![CDATA[ please type here ]]>
-							
-							
-						</attribute>
-					</ckeditor>
-				</n:form>
-				<button label="${labels.reply}"
-					onClick="@command('newReply')" popup="undoPopup" />
-			</vlayout>
-		</popup>
-		 -->
 		<separator height="30px"></separator>
 	</window>
 	<script>function setReplyParameter(e){ console.log(e); }</script>

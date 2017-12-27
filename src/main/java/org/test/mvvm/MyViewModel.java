@@ -2,11 +2,12 @@
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.test.hibernate.util.HibernateUtil;
 import org.test.model.Article;
 import org.test.model.Tag;
@@ -35,16 +36,18 @@ import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zkmax.zul.Chosenbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Hlayout;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Popup;
-import org.zkoss.zul.TreeNode;
 
 public class MyViewModel{
-	private static Logger logger ;	
+	final static Logger logger = Logger.getLogger(MyViewModel.class);
 	private org.zkoss.zk.ui.event.EventQueue<Event> insertAfter5 = EventQueues.lookup("insertAfter5", EventQueues.APPLICATION,true);
+
 	private Desktop desktop = Executions.getCurrent().getDesktop();
 	private List<Article> lastest10UserArticle,lastest10Article,lastest10Reply,allArticles;
 	private List<Tag> allTagList;
@@ -65,17 +68,20 @@ public class MyViewModel{
 	Button undo;
 	Popup ckarticleEditor;
 	Popup waitFor10Sec;
+	private UserService us = new UserService();
+	private ArticleService as = new ArticleService();
+	private TagService ts = new TagService();
+	private TagDetailService tds = new  TagDetailService();
+	private ListModelList chosenboxModel = new ListModelList<Tag>(ts.getAllTag());
+	private Set<Tag> selectedTag;
+	private Chosenbox  chosenbox;
+	private Set pickedChosenboxItem;
 
-	UserService us = new UserService();
-	ArticleService as;
-	TagService ts = new TagService();
-	TagDetailService tds = new  TagDetailService();
-	
-    @Init
+
+
+	@Init
     public void init() {
     	//SampleExecutorHolder seh = new SampleExecutorHolder();
-    	PropertyConfigurator.configure("log4j.properties");
-    	logger = Logger.getLogger(MyViewModel.class);
     	SampleExecutorHolder seh = new SampleExecutorHolder();
     	sess = Sessions.getCurrent();
     	theUser = (User)sess.getAttribute("sessionUser");
@@ -84,7 +90,6 @@ public class MyViewModel{
     	}else{
     	logger.warn(theUser);
     	HibernateUtil.getSessionFactory();
-    	as = new ArticleService();
     	List<Article> atary = as.getAllArticles();
     	Article[] ary = new Article[atary.size()];
     	ary = atary.toArray(ary);
@@ -98,7 +103,7 @@ public class MyViewModel{
     	executorService = SampleExecutorHolder.getExecutor();
 		this.insertAfter5.subscribe(new EventListener(){
 			public void onEvent(Event evt){
-				System.out.println(evt.getName());
+				logger.debug(evt.getName());
 				if(evt.getData() == getSess()){					
 					insertArticle();			
 				}
@@ -108,7 +113,6 @@ public class MyViewModel{
 		this.rootArticle = ArticleDataUtil.getRoot();
 		this.myArticleTreeModel= new ArticleTreeModel(this.rootArticle);
 		this.setPickedTreeItem(this.rootArticle);
-		System.out.println(this.myArticleTreeModel);
     	}
     }
     
@@ -116,12 +120,12 @@ public class MyViewModel{
 	public ArticleTreeNode getPickedTreeItem() {
 		return pickedTreeItem;
 	}
-	@NotifyChange("selectedArticleContent")
+	@NotifyChange("tempArticle")
 	public void setPickedTreeItem(ArticleTreeNode pickedTreeItem) {
-		System.out.print("the pickedTreeItem is ");
-		System.out.println(pickedTreeItem);
+		logger.debug("the pickedTreeItem is "+pickedTreeItem);
 		this.pickedTreeItem = pickedTreeItem;
-		this.setSelectedArticleContent(pickedTreeItem.getData().getContent());
+		this.tempArticle.setContent(pickedTreeItem.getData().getTitle());
+		this.tempArticle.setContent(pickedTreeItem.getData().getContent());
 	}
     /****start to get datas***/
 	public Session getSess() {
@@ -130,10 +134,30 @@ public class MyViewModel{
 	public void setSess(Session sess) {
 		this.sess = sess;
 	}   
+    public ListModelList getChosenboxModel() {
+		return chosenboxModel;
+	}
+	public void setChosenboxModel(ListModelList chosenboxModel) {
+		this.chosenboxModel = chosenboxModel;
+	}
+	public Set getPickedChosenboxItem() {
+		logger.debug("get the pickedTreeItem is "+pickedTreeItem);
+		return pickedChosenboxItem;
+	}
+	public void setPickedChosenboxItem(Set pickedChosenboxItem) {
+		logger.debug("set the pickedTreeItem is "+pickedTreeItem);
+		this.pickedChosenboxItem = pickedChosenboxItem;
+	}
+	public Chosenbox getChosenbox() {
+		return chosenbox;
+	}
+	public void setChosenbox(Chosenbox chosenbox) {
+		this.chosenbox = chosenbox;
+	}
+	
 	public String getSelectedArticleContent() {
 		return selectedArticleContent;
 	}
-
 	public void setSelectedArticleContent(String selectedArticleContent) {
 		this.selectedArticleContent = selectedArticleContent;
 	}
@@ -169,8 +193,6 @@ public class MyViewModel{
 	public void setAllTagList(List<Tag> allTagList) {
 		this.allTagList = allTagList;
 	}
-    
-
     
 	@NotifyChange({"lastest10Article"})
 	public void setLastest10Article(List<Article> lastest10Article){
@@ -235,23 +257,23 @@ public class MyViewModel{
     
 	@Command
 	public void savePopupComp(@BindingParam("popup1") Popup popup1,
-			@BindingParam("popup2") Popup popup2, @BindingParam("chklist") Hlayout checkboxlist,
+			@BindingParam("popup2") Popup popup2, @BindingParam("chbox") Chosenbox chosenbox,
 			@BindingParam("action") Integer action){
 		this.popup1 = popup1;
 		this.popup2 = popup2;
-		this.checkboxlist = checkboxlist;
+		this.chosenbox = chosenbox;
+		System.out.println(this.pickedTreeItem);
 		if(action == 0){
 			newArticle();
-		}else if(action== 1){
+		}else if(action== 1){			
 			reply();
 		}else if(action==2){
 			edit();
-		}
-		System.out.println(checkboxlist);
+		}	
 	}
 	
 	public void newArticle() {
-		System.out.println("new Article dosomething");
+		logger.debug("new Article dosomething");
 		this.action="insert";
 		this.tempArticle.setParentId(null);
 		this.tempArticle.setRootId(null);
@@ -260,26 +282,40 @@ public class MyViewModel{
 	
 	@NotifyChange({"tempArticle"})
 	public void reply(){
+		
 		this.action="insert";
 		this.tempArticle.setTitle("Re:"+this.pickedTreeItem.getData().getTitle());
 		this.tempArticle.setContent("");
 		this.tempArticle.setParentId(this.pickedTreeItem.getData().getArticleId());
 		this.tempArticle.setRootId(this.pickedTreeItem.getData().getRootId());
 		this.tempArticle.setUserId(this.theUser.getUserid());	
-		this.action = "insert";
+		chosenbox.setSelectedObjects(ts.getTagsByArticleId(this.tempArticle.getArticleId()));
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "tempArticle");
 	}
 	
 	@NotifyChange({"tempArticle"})
 	public void edit(){
 		if(this.pickedTreeItem.getData().getParentId() != null){
+			logger.warn(this.pickedTreeItem.getData().getContent());
+			System.out.println(this.pickedTreeItem.getData().getContent());
 			this.action="update";
 			this.tempArticle.setArticleId(this.pickedTreeItem.getData().getArticleId());
 			this.tempArticle.setTitle(this.pickedTreeItem.getData().getTitle());
 			this.tempArticle.setContent(this.pickedTreeItem.getData().getContent());
 			this.tempArticle.setParentId(this.pickedTreeItem.getData().getParentId());
 			this.tempArticle.setRootId(this.pickedTreeItem.getData().getRootId());
-			this.tempArticle.setUserId(this.pickedTreeItem.getData().getUserId());			
+			this.tempArticle.setUserId(this.pickedTreeItem.getData().getUserId());
+			List<Tag> tempList = ts.getTagsByArticleId(this.tempArticle.getArticleId());
+			List<Tag> selectedList = new LinkedList<Tag>();
+			for(int i = 0; i< chosenboxModel.size();i++){
+				for(int j = 0; j<tempList.size();j++){
+					if(((Tag)chosenboxModel.get(i)).getTagId() == tempList.get(j).getTagId()){
+						selectedList.add((Tag)chosenboxModel.get(i));
+						break;
+					}						
+				}
+			}
+			chosenbox.setSelectedObjects(selectedList);
 		}else{
 			Messagebox.show("only reply can be edited");
 			popup1.close();
@@ -289,9 +325,12 @@ public class MyViewModel{
 	@Command
 	public void delete(){
 		as.deleteArticleAndChildren(this.pickedTreeItem.getData());
+		notifiyToAll();
 	}
 	@Command
 	public void confirmArticle(){
+		logger.debug(chosenbox.getSelectedObjects().size());
+		logger.warn(chosenbox.getSelectedObjects().size());		
 		this.executorService.execute(new insertAfter5Sec(this.insertAfter5, this.desktop, this.sess));
 	}
 	
@@ -301,7 +340,8 @@ public class MyViewModel{
 	
 	private void insertArticle(){
 		if(this.undoFlag== false){
-			dealArticle("insert");
+			this.selectedTag =this.chosenbox.getSelectedObjects(); 
+			dealArticle();
 			this.popup2.close();
 			this.popup1.close();
 		}else{
@@ -312,33 +352,31 @@ public class MyViewModel{
 	
 	@Command
 	public void changeUndoFlag(){
-		System.out.println("undo inser article");
+		logger.debug("undo inser article");
 		this.undoFlag = true;
 		this.popup2.close();
 	}
 	
-	public void dealArticle(String action){
-		System.out.println("start to deal article");
+	public void dealArticle(){
+		logger.debug("start to deal article");
+		Set<Tag> tags =	 this.selectedTag;
 		if(this.action.equals("insert")){
 			as.insertNewArticle(this.tempArticle);	
 		}else if(this.action.equals("update")){
-			as.insertNewArticle(this.tempArticle);
-		}		
-//		this.checkboxlist.getChildren();
-//		for(Iterator itr = this.checkboxlist.getChildren().iterator(); itr.hasNext();){
-//			Checkbox chkbox = (Checkbox)itr.next(); 
-//			if(chkbox.isChecked()){
-//				TagDetail newTagDetail = new TagDetail();
-//				newTagDetail.setTagId(Integer.parseInt(chkbox.getName()));
-//				newTagDetail.setArticleId(this.tempArticle.getArticleId());
-//				tds.insertTagDetail(newTagDetail);
-//			}			
-//		}		
+			as.updateArticle(this.tempArticle);
+			tds.deleteTagDetailByArticleId(this.tempArticle.getArticleId());
+		}	
+		TagDetail td = new TagDetail();
+		td.setArticleId(tempArticle.getArticleId());
+		for(Iterator itr = tags.iterator(); itr.hasNext();){			
+			td.setTagId(((Tag)itr.next()).getTagId());
+			tds.insertTagDetail(td);
+		}	
 	}	
     //@NotifyChange({"lastest10UserArticle","lastest10Article","lastest10Replay","groupModel"}) not working in zk eventQueue
     //https://stackoverflow.com/questions/18382760/zk-eventqueue-working-but-data-not-refreshing
     public void notifiyToAll(){
-		System.out.println("in the que event listener");    			
+		logger.debug("in the que event listener");    			
 		this.renewGroupModel();
 		this.renewTreeModel();
 		this.setLastest10Article(as.getLastest10Article());
@@ -346,9 +384,11 @@ public class MyViewModel{
 		this.setLastest10UserArticle(as.getLastest10UserArticle(theUser.getUserid()));
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "lastest10UserArticle");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "lastest10Article");
-		BindUtils.postNotifyChange(null, null, MyViewModel.this, "lastest10Replay");
+		BindUtils.postNotifyChange(null, null, MyViewModel.this, "lastest10Reply");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "groupModel");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "myArticleTreeModel");
+		resetTempArticle();
+		BindUtils.postNotifyChange(null, null, MyViewModel.this, "tempArticle");
     }
     
     public void renewTreeModel(){
@@ -367,7 +407,7 @@ public class MyViewModel{
     	ary = atary.toArray(ary);
     	this.groupModel = new ArticleGroupModel(ary, new ArticleComparator());    	
     	this.setGroupModel(this.groupModel);
-    	System.out.println("renew done");
+    	logger.debug("renew done");
 	}
     
     private void resetTempArticle(){
@@ -375,6 +415,7 @@ public class MyViewModel{
     	this.tempArticle.setContent("");
     	this.tempArticle.setParentId(null);
     	this.tempArticle.setArticleId(null);
+    	this.chosenbox.clearSelection();
     }
 	
 //    @Command

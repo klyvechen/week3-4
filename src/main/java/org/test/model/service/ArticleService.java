@@ -3,20 +3,23 @@ package org.test.model.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.test.hibernate.util.HibernateUtil;
 import org.test.model.Article;
 import org.test.model.User;
+import org.test.mvvm.MyViewModel;
 
 public class ArticleService {
-	private static final String GET_IDENTITY = "select top 1 * from article order by articleId desc";
-	private static final String GET_ALL_ARTICLE = "select * from article ";
-	private static final String GET_LATEST10_ARTICLE = "select top 10 * from article where parentid is null order by DATE desc, TIME desc";
-	private static final String GET_LATEST10_REPLY = "select top 10 * from article where parentid is not null order by DATE desc, TIME desc";
-	private static final String GET_LATEST10_USERS_ARTICLE = "select top 10 * from article  where userId = :userId order by DATE desc, TIME desc";
-	private static final String GET_CHILDREN_BY_PARENTID = "select * from article  where parentId = :parentId order by DATE desc, TIME desc";	
-	private static final String GET_PARENTID_IS_NULL = "select * from article  where parentId is null order by DATE desc, TIME desc";
+	final static Logger logger = Logger.getLogger(ArticleService.class);
+	private static final String GET_IDENTITY = "select top 1 * from article  order by articleId desc";
+	private static final String GET_ALL_ARTICLE = "select * from article where status = 1 ";
+	private static final String GET_LATEST10_ARTICLE = "select top 10 * from article where parentid is null and  status = 1 order by DATE desc, TIME desc";
+	private static final String GET_LATEST10_REPLY = "select top 10 * from article where parentid is not null and  status = 1 order by DATE desc, TIME desc";
+	private static final String GET_LATEST10_USERS_ARTICLE = "select top 10 * from article  where userId = :userId and  status = 1 order by DATE desc, TIME desc";
+	private static final String GET_CHILDREN_BY_PARENTID = "select * from article  where parentId = :parentId and  status = 1 order by DATE asc , TIME asc ";	
+	private static final String GET_PARENTID_IS_NULL = "select * from article  where parentId is null and  status = 1 order by DATE asc , TIME asc";
 	private static final String INSERT_NEW_ARTICLE = "insert into article values(:articleId, :parentId, :rootId, :userId, :title , :content,  CURRENT_DATE, CURRENT_TIME, :status)";
 	private static final String UPDATE_ARTICLE = "update article set content = :content, title = :title where articleId = :articleId";
 	private static final String DELETE_ARTICLE = "update article set status = :status  where articleId = :articleId";
@@ -122,6 +125,7 @@ public class ArticleService {
 	public void insertNewArticle(Article article){
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
+
 		SQLQuery query = session.createSQLQuery(INSERT_NEW_ARTICLE);		
 		query.setParameter("articleId", ++tableIdentity);
 		article.setArticleId(tableIdentity);
@@ -144,6 +148,7 @@ public class ArticleService {
 			Article thisArticle = articleList.get(i);
 			deleteArticle(thisArticle);
 			articleList.addAll(getChildrenByParentId(article.getArticleId()));
+			logger.debug(i + ", " + article.getArticleId());
 		}
 	}
 	
@@ -152,7 +157,7 @@ public class ArticleService {
 		session.beginTransaction();
 		SQLQuery query = session.createSQLQuery(DELETE_ARTICLE);		
 		query.setParameter("status", 0);
-		query.setParameter("articleId", 1);
+		query.setParameter("articleId", article.getArticleId());
 		query.addEntity(User.class);
 		query.executeUpdate();
 		session.getTransaction().commit();		
@@ -169,11 +174,10 @@ public class ArticleService {
 	public void updateArticle(Article article){
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
-		SQLQuery query = session.createSQLQuery(INSERT_NEW_ARTICLE);		
+		SQLQuery query = session.createSQLQuery(UPDATE_ARTICLE);		
 		query.setParameter("articleId", article.getArticleId());
 		query.setParameter("title", article.getTitle());
 		query.setParameter("content", article.getContent());
-		query.setParameter("status", 1);
 		query.addEntity(User.class);
 		query.executeUpdate();
 		session.getTransaction().commit();

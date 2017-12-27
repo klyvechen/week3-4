@@ -1,16 +1,18 @@
 package org.test.mvvm;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.test.model.User;
 import org.test.model.service.AuthenService;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
-import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zul.Messagebox;
 
 public class LoginViewModel {
+	final static Logger logger = Logger.getLogger(LoginViewModel.class);
 	private Session sess;
 	public Session getSess() {
 		return sess;
@@ -32,6 +34,7 @@ public class LoginViewModel {
 
 	@Init
 	public void init() {
+    	PropertyConfigurator.configure("log4j.properties");
 		sess = Sessions.getCurrent();
 	}
 

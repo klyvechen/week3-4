@@ -24,5 +24,7 @@ public class Tag implements Serializable{
 	public void setTagContent(String tagContent) {
 		this.tagContent = tagContent;
 	}
-	
+	public String toString(){
+		return this.tagContent;
+	}
 }

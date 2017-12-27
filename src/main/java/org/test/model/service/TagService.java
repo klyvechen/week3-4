@@ -10,7 +10,8 @@ import org.test.model.Tag;
 
 public class TagService {
 	private static final String GET_ALL_TAGS = "select * from Tag";
-	private static final String GET_TAGS_BY_ARTID = "select * from Tag t join tagDetail td on t.tagId = td.tagId  where td.articleId = :articleId`";
+	private static final String GET_ALL_TAGNAMES  = "select tagContent from Tag";
+	private static final String GET_TAGS_BY_ARTID = "select * from Tag t join tagDetail td on t.tagId = td.tagId  where td.articleId = :articleId";
 	public List<Tag> getAllTag() {
 		List<Tag> tl = new ArrayList<Tag>();
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -21,6 +22,14 @@ public class TagService {
 		session.getTransaction().commit();		
 		return tl;
 	}
+//	public List<String> getAllTagNames() {
+//		List<String> tn = new ArrayList<String>();
+//		List<Tag> tl = getAllTag();
+//		for(Tag tag : tl){
+//			tn.add(tag.getTagContent());
+//		}			
+//		return tn;
+//	}
 	public List<Tag> getTagsByArticleId(Integer articleId) {
 		List<Tag> tl = new ArrayList<Tag>();
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
