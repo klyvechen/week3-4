@@ -28,7 +28,7 @@ public class ArticleDataUtil {
 		atnList.add(root);
 		for(int i = 0; i<atnList.size();i++){
 			ArticleTreeNode thisArticleTreeNode = atnList.get(i);			
-			List<Article> thisChildren = as.getChildrenByParentId(thisArticleTreeNode.getData().getArticleId());
+			List<Article> thisChildren = as.getChildrenByParentIdAsc(thisArticleTreeNode.getData().getArticleId());
 			for(int j = 0; j< thisChildren.size();j++){				
 				ArticleTreeNode child = new ArticleTreeNode(thisChildren.get(j),new LinkedList());
 				thisArticleTreeNode.add(child);
@@ -44,6 +44,50 @@ public class ArticleDataUtil {
 			parentArticle.add(new ArticleTreeNode(a,new LinkedList()));
 		}else {
 			((TreeNode)treeModel.getRoot()).add(new ArticleTreeNode(a,new LinkedList()));
+		}
+	}
+	
+	public static void removeArticleFromTree(Integer removeId,TreeNode<Article> root){
+		TreeNode<Article> parentNode = null;
+		List<TreeNode<Article>> atnList = new LinkedList();
+		atnList.add(root);
+		boolean findFlag = false;
+		for(int i = 0; i<atnList.size();i++){
+			TreeNode<Article> thisArticleTreeNode = atnList.get(i);			
+			List<TreeNode<Article>> thisChildren = thisArticleTreeNode.getChildren();
+			for(int j = 0; j< thisChildren.size();j++){				
+				if(thisChildren.get(j).getData().getArticleId() == removeId){
+					thisArticleTreeNode.remove(j);
+					findFlag = true;
+					break;
+				}				
+			}			
+			if(findFlag == true){
+				break;
+			}
+			atnList.addAll(thisChildren);
+		}
+	}
+	public static void editArticleFromTree(Article a,TreeNode<Article> root){
+		TreeNode<Article> parentNode = null;
+		List<TreeNode<Article>> atnList = new LinkedList();
+		atnList.add(root);
+		boolean findFlag = false;
+		for(int i = 0; i<atnList.size();i++){
+			TreeNode<Article> thisArticleTreeNode = atnList.get(i);			
+			List<TreeNode<Article>> thisChildren = thisArticleTreeNode.getChildren();
+			for(int j = 0; j< thisChildren.size();j++){				
+				if(thisChildren.get(j).getData().getArticleId() == a.getArticleId()){
+					thisChildren.get(j).getData().setContent(a.getContent());
+					thisChildren.get(j).getData().setTitle(a.getTitle());
+					findFlag = true;
+					break;
+				}				
+			}			
+			if(findFlag == true){
+				break;
+			}
+			atnList.addAll(thisChildren);
 		}
 	}
 	

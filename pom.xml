@@ -5,6 +5,7 @@
 	<artifactId>week3-4</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
+	<myCustomName>jumper</myCustomName>
 		<zk.version>8.5.0-Eval</zk.version>
 		<commons-io>2.4</commons-io>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
@@ -126,10 +127,11 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>${project.artifactId}</finalName>
+		<finalName>${myCustomName}</finalName>
 		<plugins>
 			<!-- Run with Jetty -->
 			<plugin>
+			
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>7.6.8.v20121106</version>

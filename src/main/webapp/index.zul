@@ -1,3 +1,4 @@
+<?init class="org.test.filter.MyInitial"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
 <?page title="welcome" contentType="text/html;charset=UTF-8"?>
 <zk xmlns:n="native" xmlns:w="client">
@@ -86,37 +87,11 @@
 			<tabs id="tabs">
 				<tab label="${labels.ListModel}" onSelect="" />
 				<tab label="${labels.TreeModel}" onSelect="" />
-				<tab label="${labels.TreeModel}" onSelect="" />
 			</tabs>
 
 			<tabpanels>
 				<tabpanel>
 					<div>
-						<!-- 
-							<listbox model="@load(vm.groupModel)"
-							height="1000px" multiple="true"
-							itemRenderer="org.test.model.group.ArticleListGroupRender">
-							<custom-attributes
-							org.zkoss.zul.listbox.groupSelect="true" />
-							<listhead>
-							<listheader width="300px"
-							label="${labels.title}" />
-							<listheader label="${labels.content}" />
-							<listheader width="100px"
-							label="${labels.reply}" />
-							<listheader width="100px"
-							label="${labels.edit}" />
-							<listheader width="100px"
-							label="${labels.delete}" />
-							</listhead>
-							<template name="model" var="article">
-							<listitem>
-							<listcell
-							label="@load(article.title)" />
-							</listitem>
-							</template>
-							</listbox>
-						-->
 						<hlayout>
 							<listbox hflex="2" height="750px"
 								model="@load(vm.allArticles)"
@@ -146,7 +121,7 @@
 										onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=1)" />
 									<if test="@load(vm.author)">
 										<if
-											test="@load(not vm.mainArticle)">
+											test="@load(not vm.hasChildren)">
 											<button label="${labels.edit}"
 												popup="ckarticleEditor"
 												onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=2)" />
@@ -237,7 +212,7 @@
 									popup="ckarticleEditor"
 									onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=1)" />
 								<if test="@load(vm.author)">
-									<if	test="@load(not vm.mainArticle)">
+									<if	test="@load(not vm.hasChildren)">
 										<button id="editbtn"
 											label="${labels.edit}" popup="ckarticleEditor"
 											onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=2)" />
@@ -298,5 +273,4 @@
 		<popup id="undoConfirmPopup"></popup>
 		<separator height="30px"></separator>
 	</window>
-	<script>function setReplyParameter(e){ console.log(e); }</script>
 </zk>

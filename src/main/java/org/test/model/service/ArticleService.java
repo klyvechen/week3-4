@@ -23,11 +23,12 @@ public class ArticleService {
 	private static final String GET_CHILDREN_BY_PARENTID = "select * from article  where parentId = :parentId and  status = 1 order by DATE desc , TIME desc ";
 	private static final String GET_CHILDREN_BY_PARENTID_ASC = "select * from article  where parentId = :parentId and  status = 1 order by DATE asc , TIME asc ";	
 	private static final String GET_PARENTID_IS_NULL = "select * from article  where parentId is null and  status = 1 order by DATE asc , TIME asc";
+	private static final String HAS_CHILD = "select * from article  where parentId = :articleId and status = 1";
 	private static final String INSERT_NEW_ARTICLE = "insert into article values(:articleId, :parentId, :rootId, :userId, :title , :content,  CURRENT_DATE, CURRENT_TIME, :status)";
 	private static final String UPDATE_ARTICLE = "update article set content = :content, title = :title where articleId = :articleId";
 	private static final String DELETE_ARTICLE = "update article set status = :status  where articleId = :articleId";
 	private static final String RECOVER_ALL = "update article set status = 1";
-	private static Integer tableIdentity = 0;
+	public static Integer tableIdentity = 0;
 	static{
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -145,6 +146,29 @@ public class ArticleService {
 		}
 		return articlelist;
 	}
+
+	public List<Article> getChildrenByParentIdAsc(Integer parentId){		
+		List<Article> articlelist = new ArrayList<Article>();
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		SQLQuery query;
+		if(parentId!=null){
+			query= session.createSQLQuery(GET_CHILDREN_BY_PARENTID_ASC);
+			query.setParameter("parentId", parentId);
+		}else{
+			query = session.createSQLQuery(GET_PARENTID_IS_NULL);
+		}
+		query.addEntity(Article.class);
+		articlelist = query.list();
+		session.getTransaction().commit();		
+		for(int i = 0; i< articlelist.size();i++){
+			Article at = articlelist.get(i);
+			if((at.getTitle()!=null)&&at.getTitle().equals("")){
+				at.setTitle("為推文 沒有標題");
+			}
+		}
+		return articlelist;
+	}
 	
 	public void insertNewArticle(Article article){
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -241,6 +265,20 @@ public class ArticleService {
 		article = (Article)query.uniqueResult();
 		session.getTransaction().commit();
 		return article;
+	}
+	
+	public boolean hasChildren(Integer articleId){
+		
+		List<Article> articlelist;
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		SQLQuery query = session.createSQLQuery(HAS_CHILD);
+		query.setParameter("articleId", articleId);
+		query.addEntity(Article.class);
+		articlelist = query.list();
+		session.getTransaction().commit();		
+		
+		return (articlelist.size() == 0)? false: true;
 	}
 	
 	public static void main(String[] args){

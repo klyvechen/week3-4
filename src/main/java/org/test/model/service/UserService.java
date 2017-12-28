@@ -27,24 +27,6 @@ public class UserService {
 
 	public List<User> getUsers() {
 		List<User> results = null;
-//		 try {
-//		     Class.forName("org.hsqldb.jdbc.JDBCDriver" );
-//		     Connection c = DriverManager.getConnection("jdbc:hsqldb:file:E:/hsqldb/hsqldb/hemrajdb", "SA", "");
-//		     Statement stm = c.createStatement();
-//		     ResultSet rs = stm.executeQuery(GET_USERS);
-//		     while(rs.next()){
-//		    	 System.out.println( rs.getInt(1));
-//		     }
-//		     System.out.println(rs);
-//		     rs.close();
-//		     stm.close();
-//		     c.close();
-//		     return null;
-//		 } catch (Exception e) {
-//		     System.err.println("ERROR: failed to load HSQLDB JDBC driver.");
-//		     e.printStackTrace();
-//		     return null;
-//		 }
 		 
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 

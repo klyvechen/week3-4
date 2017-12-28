@@ -77,6 +77,7 @@ public class Article implements Cloneable,  Serializable {
 	}
 	
 	public Date getDate() {		
+		
 		return date;
 	}
 	public void setDate(Date date) {
