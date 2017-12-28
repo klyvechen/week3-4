@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.test.model.Article;
 import org.test.model.service.ArticleService;
+import org.test.model.service.UserService;
 import org.test.mvvm.LoginViewModel;
 import org.zkoss.zul.DefaultTreeNode;
 
@@ -13,6 +14,7 @@ public class ArticleTreeNode extends DefaultTreeNode<Article> {
 	final static Logger logger = Logger.getLogger(LoginViewModel.class);
     private static final long serialVersionUID = 1L;
     private ArticleService as = new ArticleService();
+    private UserService us = new UserService();
     
     public ArticleTreeNode(Article article, List<ArticleTreeNode> nulllist) {
     	super(article, new LinkedList<ArticleTreeNode>()); // assume not a leaf-node
@@ -33,5 +35,8 @@ public class ArticleTreeNode extends DefaultTreeNode<Article> {
     	logger.debug(getData().getDate());
         return getData().getDate().toString() +" "+ getData().getTime().toString();
     }
-
+    public String getUsername() {    	    
+        return getData().getUsername();
+    }
+    
 }

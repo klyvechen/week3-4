@@ -6,6 +6,8 @@ import java.sql.Time;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.test.model.service.UserService;
+
 
 public class Article implements Cloneable,  Serializable {
 	private Integer articleId; //primary key
@@ -16,15 +18,30 @@ public class Article implements Cloneable,  Serializable {
 	private String content;
 	private Date date;
 	private Time time;
+	private Integer generation;
+	private String margin;
 	private List<Article> children = new LinkedList<Article>();
+	private UserService us = new UserService();
+	
 	public Article(){
 		this.title = "default title";
 		this.content = "default content";
 	}
 	
+	public String getMargin() {
+		return "margin-left:"+ generation*30+"px";
+	}		
 	public Integer getArticleId() {
 		return articleId;
 	}
+	public Integer getGeneration() {
+		return generation;
+	}
+
+	public void setGeneration(Integer generation) {
+		this.generation = generation;
+	}
+
 	public void setArticleId(Integer articleId) {
 		this.articleId = articleId;
 	}
@@ -59,7 +76,7 @@ public class Article implements Cloneable,  Serializable {
 		this.content = content;
 	}
 	
-	public Date getDate() {
+	public Date getDate() {		
 		return date;
 	}
 	public void setDate(Date date) {
@@ -88,6 +105,14 @@ public class Article implements Cloneable,  Serializable {
 		children.remove(child);
 	}
 	
+    public String getUsername() {
+    	String username;
+    	if(getUserId() != null)
+    		username =us.getUserById(getUserId()).getUsername();
+    	else
+    		username = "default name";
+        return username;
+    }
 	@Override
 	public Article clone() throws CloneNotSupportedException{
 		Article a = (Article) super.clone();		

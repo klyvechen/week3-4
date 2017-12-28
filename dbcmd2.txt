@@ -9,8 +9,7 @@ jdbc:hsqldb:mem:testdb
 select top 10 * from article where parentid is null order by DATE desc, TIME desc
 
 select top 10 * from article where parentid is not null order by DATE desc, TIME desc
-
-
+update article set date =  DATEADD ( 'day', articleId*1 , DATE '2015-11-22' )
 
 
 DROP TABLE User;

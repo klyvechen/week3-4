@@ -12,6 +12,7 @@ public class UserService {
 	private static final String GET_IDENTITY = "select top 1 * from user order by userid desc";
 	private static final String GET_USERS = "select * from User";
 	private static final String GET_USER_BY_NAME = "select * from User where username = :un";
+	private static final String GET_USER_BY_ID = "select * from User where userId = :uid";
 	private static final String CREATE_NEW_USER = "INSERT INTO USER VALUES(:identity,:username, :password)";	
 	private static Integer tableIdentity = 0;
 	static{
@@ -65,6 +66,17 @@ public class UserService {
 		session.beginTransaction();
 		SQLQuery query = session.createSQLQuery(GET_USER_BY_NAME);
 		query.setParameter("un", username);
+		query.addEntity(User.class);
+		u = (User)query.uniqueResult();
+		session.getTransaction().commit();		
+		return u;
+	}
+	public User getUserById(Integer userId) {
+		User u = new User();
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		SQLQuery query = session.createSQLQuery(GET_USER_BY_ID);
+		query.setParameter("uid", userId);
 		query.addEntity(User.class);
 		u = (User)query.uniqueResult();
 		session.getTransaction().commit();		

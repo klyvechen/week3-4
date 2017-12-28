@@ -1,6 +1,8 @@
 package org.test.model.service;
 
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -9,7 +11,6 @@ import org.hibernate.Session;
 import org.test.hibernate.util.HibernateUtil;
 import org.test.model.Article;
 import org.test.model.User;
-import org.test.mvvm.MyViewModel;
 
 public class ArticleService {
 	final static Logger logger = Logger.getLogger(ArticleService.class);
@@ -18,7 +19,8 @@ public class ArticleService {
 	private static final String GET_LATEST10_ARTICLE = "select top 10 * from article where parentid is null and  status = 1 order by DATE desc, TIME desc";
 	private static final String GET_LATEST10_REPLY = "select top 10 * from article where parentid is not null and  status = 1 order by DATE desc, TIME desc";
 	private static final String GET_LATEST10_USERS_ARTICLE = "select top 10 * from article  where userId = :userId and  status = 1 order by DATE desc, TIME desc";
-	private static final String GET_CHILDREN_BY_PARENTID = "select * from article  where parentId = :parentId and  status = 1 order by DATE asc , TIME asc ";	
+	private static final String GET_CHILDREN_BY_PARENTID = "select * from article  where parentId = :parentId and  status = 1 order by DATE desc , TIME desc ";
+	private static final String GET_CHILDREN_BY_PARENTID_ASC = "select * from article  where parentId = :parentId and  status = 1 order by DATE asc , TIME asc ";	
 	private static final String GET_PARENTID_IS_NULL = "select * from article  where parentId is null and  status = 1 order by DATE asc , TIME asc";
 	private static final String INSERT_NEW_ARTICLE = "insert into article values(:articleId, :parentId, :rootId, :userId, :title , :content,  CURRENT_DATE, CURRENT_TIME, :status)";
 	private static final String UPDATE_ARTICLE = "update article set content = :content, title = :title where articleId = :articleId";
@@ -34,9 +36,28 @@ public class ArticleService {
 		tableIdentity = (u!= null)? u.getArticleId(): 0;
 		session.getTransaction().commit();		
 	}
+	
+	public List<Article> getArticleDFSResult(Article rootArticle){
+		logger.debug("in ArticleDFS");		
+		List<Article> resultList = new LinkedList<Article>();
+		Deque<Article> nextList = new LinkedList<Article>();
+		nextList.add(rootArticle);
+		rootArticle.setGeneration(0);		
+		for(int i = 0; nextList.size() > 0;i++){			
+			Article a = nextList.pop();
+			int generation = a.getGeneration();
+			List<Article> children =this.getChildrenByParentId(a.getArticleId());
+			for(Article child: children){
+				child.setGeneration(generation+1);
+				nextList.push(child);
+			}			
+			resultList.add(a);
+		}
+		return resultList;
+	}
 
 	public List<Article> getAllArticles(){
-		System.out.println("in the get lastest10Article");
+		logger.debug("in the get lastest10Article");
 		List<Article> articlelist = new ArrayList<Article>();
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
@@ -48,7 +69,7 @@ public class ArticleService {
 	}
 	
 	public List<Article> getLastest10Article(){
-		System.out.println("in the get lastest10Article");
+		logger.debug("in the get lastest10Article");
 		List<Article> articlelist = new ArrayList<Article>();
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 
@@ -98,6 +119,8 @@ public class ArticleService {
 		}
 		return articlelist;
 	}
+	
+	
 
 	public List<Article> getChildrenByParentId(Integer parentId){		
 		List<Article> articlelist = new ArrayList<Article>();
@@ -185,9 +208,9 @@ public class ArticleService {
 	
 	public static void main(String[] args){
 		ArticleService as = new  ArticleService();
-		System.out.println(as.getLastest10Article());
-		System.out.println(as.getLastest10Reply());
-		System.out.println(as.getAllArticles());
+		logger.debug(as.getLastest10Article());
+		logger.debug(as.getLastest10Reply());
+		logger.debug(as.getAllArticles());
 		System.exit(0);
 	}
 }
