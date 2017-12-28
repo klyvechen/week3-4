@@ -43,6 +43,7 @@ import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Popup;
+import org.zkoss.zul.TreeNode;
 
 public class MyViewModel {
 	final static Logger logger = Logger.getLogger(MyViewModel.class);
@@ -142,21 +143,24 @@ public class MyViewModel {
 		return pickedArticle;
 	}
 	
-	@NotifyChange({"tempArticle","author","mainArticle","listModel"})
+	@NotifyChange({"tempArticle","author","mainArticle","listModel","selectedTagList"})
 	public void setPickedArticle(Article pickedArticle) {
 		logger.debug("in the setPickedArticle");
 		this.pickedArticle = pickedArticle;
-		this.tempArticle.setContent(this.pickedArticle.getTitle());
+		this.tempArticle.setArticleId(this.pickedArticle.getArticleId());
+		this.tempArticle.setTitle(this.pickedArticle.getTitle());
 		this.tempArticle.setContent(this.pickedArticle.getContent());
 		this.author =  (this.getPickedArticle() != null)
 				? (this.getPickedArticle().getUserId() == theUser.getUserid()) : false;
-		this.mainArticle = (this.getPickedTreeItem() != null)?(this.getPickedTreeItem().getData().getParentId() == null):false;
+		this.mainArticle = (this.pickedArticle != null)?(this.pickedArticle.getParentId() == null):false;
 		this.listModel = as.getArticleDFSResult(pickedArticle);
+		this.selectedTagList = ts.getTagsByArticleId(this.pickedArticle.getArticleId());
 		logger.debug(this.listModel.size());
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "tempArticle");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "author");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "mainArticle");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "listModel");
+		BindUtils.postNotifyChange(null, null, MyViewModel.this, "selectedTagList");
 	}
 	
 
@@ -202,7 +206,13 @@ public class MyViewModel {
 		logger.debug("set the pickedTreeItem is " + pickedTreeItem);
 		this.pickedChosenboxItem = pickedChosenboxItem;
 	}
+	public List<Tag> getSelectedTagList() {
+		return selectedTagList;
+	}
 
+	public void setSelectedTagList(List<Tag> selectedTagList) {
+		this.selectedTagList = selectedTagList;
+	}
 	public Chosenbox getChosenbox() {
 		return chosenbox;
 	}
@@ -312,8 +322,10 @@ public class MyViewModel {
 		if (action == 0) {
 			newArticle();
 		} else if (action == 1) {
+			setChosenboxSelectItem();
 			reply();
 		} else if (action == 2) {
+			setChosenboxSelectItem();
 			edit();
 		}
 	}
@@ -335,7 +347,7 @@ public class MyViewModel {
 		this.tempArticle.setParentId(this.pickedArticle.getArticleId());
 		this.tempArticle.setRootId(this.pickedArticle.getRootId());
 		this.tempArticle.setUserId(this.theUser.getUserid());
-		chosenbox.setSelectedObjects(ts.getTagsByArticleId(this.tempArticle.getArticleId()));
+		
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "tempArticle");
 	}
 
@@ -350,28 +362,34 @@ public class MyViewModel {
 			this.tempArticle.setContent(this.pickedArticle.getContent());
 			this.tempArticle.setParentId(this.pickedArticle.getParentId());
 			this.tempArticle.setRootId(this.pickedArticle.getRootId());
-			this.tempArticle.setUserId(this.pickedArticle.getUserId());
-			List<Tag> tempList = ts.getTagsByArticleId(this.tempArticle.getArticleId());
-			List<Tag> selectedList = new LinkedList<Tag>();
-			for (int i = 0; i < chosenboxModel.size(); i++) {
-				for (int j = 0; j < tempList.size(); j++) {
-					if (((Tag) chosenboxModel.get(i)).getTagId() == tempList.get(j).getTagId()) {
-						selectedList.add((Tag) chosenboxModel.get(i));
-						break;
-					}
-				}
-			}
-			chosenbox.setSelectedObjects(selectedList);
+			this.tempArticle.setUserId(this.pickedArticle.getUserId());			
+
 		} else {
 			Messagebox.show("only reply can be edited");
 			popup1.close();
 		}
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "tempArticle");
 	}
+	
+	private void setChosenboxSelectItem(){
+		List<Tag> chosneboxSelectedList = new LinkedList<Tag>();
+		for (int i = 0; i < chosenboxModel.size(); i++) {
+			for (int j = 0; j < selectedTagList.size(); j++) {
+				if (((Tag) chosenboxModel.get(i)).getTagId() == selectedTagList.get(j).getTagId()) {
+					chosneboxSelectedList.add((Tag) chosenboxModel.get(i));
+					break;
+				}
+			}
+		}
+		chosenbox.setSelectedObjects(chosneboxSelectedList);
+	}
+
+
 
 	@Command
 	public void delete() {
 		as.deleteArticleAndChildren(this.pickedArticle);
+		resetTempArticle();
 		notifiyToAll();
 	}
 
@@ -432,23 +450,53 @@ public class MyViewModel {
 	// @NotifyChange({"lastest10UserArticle","lastest10Article","lastest10Replay","groupModel"})
 	// not working in zk eventQueue
 	// https://stackoverflow.com/questions/18382760/zk-eventqueue-working-but-data-not-refreshing
+	@NotifyChange({"tempArticle","author","mainArticle","listModel","selectedTagList","myArticleTreeModel","groupModel","lastest10Reply", "lastest10Article","lastest10UserArticle","allArticles"})
 	public void notifiyToAll() {
 		logger.debug("in the que event listener");
 		this.renewGroupModel();
 		this.renewTreeModel();
+		this.renewListModel();
 		this.setLastest10Article(as.getLastest10Article());
 		this.setLastest10Reply(as.getLastest10Reply());
 		this.setLastest10UserArticle(as.getLastest10UserArticle(theUser.getUserid()));
+		//
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "lastest10UserArticle");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "lastest10Article");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "lastest10Reply");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "groupModel");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "myArticleTreeModel");
-		resetTempArticle();
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "tempArticle");
+		BindUtils.postNotifyChange(null, null, MyViewModel.this, "author");
+		BindUtils.postNotifyChange(null, null, MyViewModel.this, "mainArticle");
+		BindUtils.postNotifyChange(null, null, MyViewModel.this, "listModel");
+		BindUtils.postNotifyChange(null, null, MyViewModel.this, "selectedTagList");
+		BindUtils.postNotifyChange(null, null, MyViewModel.this, "allArticles");
 	}
 
-	public void renewTreeModel() {
+	public void renewTreeModel(){
+		Article a = getThisArticle();		
+		ArticleDataUtil.addArticleToTree(a,myArticleTreeModel);
+	}
+	
+	public void renewListModel(){
+		Article a = getThisArticle();		
+		this.allArticles.add(a);
+		int lastChildIndex = 0;
+		for(int i = 0; i<this.listModel.size();i++){			
+			if(this.listModel.get(i).getParentId()==a.getParentId()){
+				lastChildIndex = i;
+			}			
+		}
+		((LinkedList)this.listModel).add(lastChildIndex+1, a);
+	}
+	public Article getThisArticle(){
+		Article a = as.getArticleById(tempArticle.getArticleId());
+		a.setGeneration(as.getArticleGeneration(this.tempArticle));
+		return a;
+	}
+	
+	
+	public void renewTreeModel2() {
 		this.myArticleTreeModel = null;
 		this.rootArticle = ArticleDataUtil.getRoot();
 		this.myArticleTreeModel = new ArticleTreeModel(this.rootArticle);

@@ -1,9 +1,8 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
 <?page title="login page" contentType="text/html;charset=UTF-8"?>
 <zk>
-<window title="new page title" border="normal" viewModel="@id('vm')@init('org.test.mvvm.LoginViewModel')">
+<window title="${c:l('LOGIN')}" border="normal" viewModel="@id('vm')@init('org.test.mvvm.LoginViewModel')">
 		<vbox>			
-			${c:l('LOGIN')}
 			<textbox value="@save(vm.loginUser.username)" />
 			<textbox value=" @save(vm.loginUser.password)"
 				type="password" />

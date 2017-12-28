@@ -19,6 +19,7 @@ public class ArticleService {
 	private static final String GET_LATEST10_ARTICLE = "select top 10 * from article where parentid is null and  status = 1 order by DATE desc, TIME desc";
 	private static final String GET_LATEST10_REPLY = "select top 10 * from article where parentid is not null and  status = 1 order by DATE desc, TIME desc";
 	private static final String GET_LATEST10_USERS_ARTICLE = "select top 10 * from article  where userId = :userId and  status = 1 order by DATE desc, TIME desc";
+	private static final String GET_ARTICLE_BY_ID = "select * from article where articleID = :articleId";
 	private static final String GET_CHILDREN_BY_PARENTID = "select * from article  where parentId = :parentId and  status = 1 order by DATE desc , TIME desc ";
 	private static final String GET_CHILDREN_BY_PARENTID_ASC = "select * from article  where parentId = :parentId and  status = 1 order by DATE asc , TIME asc ";	
 	private static final String GET_PARENTID_IS_NULL = "select * from article  where parentId is null and  status = 1 order by DATE asc , TIME asc";
@@ -204,6 +205,42 @@ public class ArticleService {
 		query.addEntity(User.class);
 		query.executeUpdate();
 		session.getTransaction().commit();
+	}
+	
+	public Integer getArticleGeneration(Article ag){
+		Article root = new Article();
+		root.setGeneration(0);		
+		List<Article> resultList = new LinkedList<Article>();
+		Deque<Article> nextList = new LinkedList<Article>();
+		nextList.add(root);
+		Integer generation = 0;
+		for(int i = 0; nextList.size() > 0;i++){			
+			Article a = nextList.pop();
+			generation= a.getGeneration();
+			if(ag.getParentId() == a.getArticleId()){
+				generation++;
+				break;
+			}			
+			List<Article> children =this.getChildrenByParentId(a.getArticleId());
+			for(Article child: children){				
+				child.setGeneration(generation+1);
+				nextList.push(child);
+			}			
+			resultList.add(a);
+		}				
+		return generation;
+	}
+	
+	public Article getArticleById(Integer articleId){
+		Article article = new Article();
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+		SQLQuery query = session.createSQLQuery(GET_ARTICLE_BY_ID);
+		query.setParameter("articleId", articleId);
+		query.addEntity(Article.class);
+		article = (Article)query.uniqueResult();
+		session.getTransaction().commit();
+		return article;
 	}
 	
 	public static void main(String[] args){

@@ -16,7 +16,7 @@
 				-->
 				<div>
 					<listbox height="400px"
-						model="@load(vm.lastest10Article)">
+						model="@load(vm.lastest10Article)" selectedItem="@bind(vm.pickedListItem)">
 						<listhead>
 							<listheader
 								label="${labels.lastest10Article}" sort="auto" />
@@ -37,7 +37,7 @@
 			<vbox>
 				<div>
 					<listbox height="400px"
-						model="@load(vm.lastest10Reply)">
+						model="@load(vm.lastest10Reply)" selectedItem="@bind(vm.pickedListItem)">
 						<listhead>
 							<listheader label="${labels.lastest10Reply}"
 								sort="auto" />
@@ -58,7 +58,7 @@
 			<vbox>
 				<div>
 					<listbox height="400px"
-						model="@load(vm.lastest10UserArticle)">
+						model="@load(vm.lastest10UserArticle)" selectedItem="@bind(vm.pickedListItem)">
 						<listhead>
 							<listheader
 								label="${labels.lastest10myArticle}" sort="auto" />
@@ -118,14 +118,12 @@
 							</listbox>
 						-->
 						<hlayout>
-							<listbox hflex="2"  height="750px"
+							<listbox hflex="2" height="750px"
 								model="@load(vm.allArticles)"
 								selectedItem="@bind(vm.pickedListItem)">
 								<listhead>
-									<listheader
-										label="${labels.title}" />
-									<listheader
-										label="${labels.date}" />
+									<listheader label="${labels.title}" />
+									<listheader label="${labels.date}" />
 									<listheader
 										label="${labels.author}" />
 								</listhead>
@@ -141,30 +139,39 @@
 								</template>
 							</listbox>
 							<div hflex="3" vflex="1">
-								<hlayout>
+								<hlayout height="50px">
 
-									<button label="reply"
+									<button label="${labels.reply}"
 										popup="ckarticleEditor"
 										onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=1)" />
 									<if test="@load(vm.author)">
 										<if
 											test="@load(not vm.mainArticle)">
-											<button label=" edit "
+											<button label="${labels.edit}"
 												popup="ckarticleEditor"
 												onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=2)" />
 										</if>
-										<button label="delete"
+										<button label="${labels.delete}"
 											onClick="@command('delete')" />
 									</if>
 								</hlayout>
-								<listbox model="@load(vm.listModel)"  height="700px">
-									<listhead>
-									<listheader hflex="3"
-											label="${labels.date}" />
-										<listheader hflex="10" 
-											label="${labels.content}" />
-										<listheader hflex="2"
-											label="${labels.author}" />
+								<hlayout height="30px">
+									<label value="${labels.tag}" />
+									<hlayout
+										children="@load(vm.selectedTagList)">
+										<template name="children"
+											var="tag">
+											<checkbox
+												label="@load(tag.tagContent)" disabled="true" />
+										</template>
+									</hlayout>
+								</hlayout>
+								<listbox model="@load(vm.listModel)"
+									height="670px" selectedItem="@bind(vm.pickedListItem)">
+									<listhead height="0px">
+										<listheader hflex="1"/>
+										<listheader hflex="5"/>
+										<listheader hflex="1"/>
 									</listhead>
 									<template name="model"
 										var="article">
@@ -174,16 +181,20 @@
 													<![CDATA[ ]]>
 												</html>
 											</listcell>
-											<listcell >
-												<div width="100px" style=":left"/>
-												<div  width="" style="@load(article.margin)">
-												<html content="@load(article.content)">
-													<![CDATA[ ]]>
+											<listcell>
+												<div width="100px"
+													style=":left" />
+												<div width=""
+													style="@load(article.margin)">
+													<html
+														content="@load(article.content)">
+														<![CDATA[ ]]>
 												</html>
 												</div>
-											</listcell>											
+											</listcell>
 											<listcell>
-												<html content="@load(article.username)">
+												<html
+													content="@load(article.username)">
 													<![CDATA[ ]]>
 												</html>
 											</listcell>
@@ -200,9 +211,12 @@
 							model="@load(vm.myArticleTreeModel)"
 							selectedItem="@bind(vm.pickedTreeItem)">
 							<treecols>
-								<treecol hflex="2" label="${labels.title}" />
-								<treecol hflex="1" label="${labels.date}" />
-								<treecol hflex="1" label="${labels.author}" />
+								<treecol hflex="2"
+									label="${labels.title}" />
+								<treecol hflex="1"
+									label="${labels.date}" />
+								<treecol hflex="1"
+									label="${labels.author}" />
 							</treecols>
 							<template name="model" var="comp">
 								<treeitem>
@@ -218,34 +232,35 @@
 							</template>
 						</tree>
 						<div hflex="3" vflex="1">
-							<hlayout>
-
-								<button id="replybtn" label="reply"
+							<hlayout height="50px">
+								<button id="replybtn" label="${labels.reply}"
 									popup="ckarticleEditor"
 									onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=1)" />
 								<if test="@load(vm.author)">
-									<if
-										test="@load(not vm.mainArticle)">
+									<if	test="@load(not vm.mainArticle)">
 										<button id="editbtn"
-											label="edit" popup="ckarticleEditor"
+											label="${labels.edit}" popup="ckarticleEditor"
 											onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=2)" />
 									</if>
 									<button id="deletebtn"
-										label="delete" onClick="@command('delete')" />
+										label="${labels.delete}" onClick="@command('delete')" />
 								</if>
+							</hlayout>
+							<hlayout height="30px">
+								<label value="${labels.tag}" />
+								<hlayout
+									children="@load(vm.selectedTagList)">
+									<template name="children"
+										var="tag">
+										<checkbox
+											label="@load(tag.tagContent)" disabled="true" />
+									</template>
+								</hlayout>
 							</hlayout>
 							<html
 								content="@load(vm.tempArticle.content)">
-
-								
 								<![CDATA[ ]]>
-								
-								
 							</html>
-							<!-- 
-								<label id="articleContent"
-								value="@load(vm.tempArticle.content)" hflex="1" vflex="1" />
-							-->
 						</div>
 					</hlayout>
 				</tabpanel>
@@ -266,11 +281,7 @@
 					<ckeditor id="htmlEditor" width="850px"
 						value="@bind(vm.tempArticle.content)">
 						<attribute name="value">
-
-							
 							<![CDATA[ please type here ]]>
-							
-							
 						</attribute>
 					</ckeditor>
 				</n:form>

@@ -18,7 +18,7 @@ public class Article implements Cloneable,  Serializable {
 	private String content;
 	private Date date;
 	private Time time;
-	private Integer generation;
+	private Integer generation = 0;
 	private String margin;
 	private List<Article> children = new LinkedList<Article>();
 	private UserService us = new UserService();

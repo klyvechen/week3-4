@@ -1,5 +1,7 @@
 package org.test.model.mytree;
 
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,7 +35,9 @@ public class ArticleTreeNode extends DefaultTreeNode<Article> {
     }
     public String getDate() {
     	logger.debug(getData().getDate());
-        return getData().getDate().toString() +" "+ getData().getTime().toString();
+    	if(getData().getDate()==null)
+    		getData().setDate(new Date(Calendar.getInstance().getTime().getTime()));    				
+        return getData().getDate().toString();
     }
     public String getUsername() {    	    
         return getData().getUsername();
