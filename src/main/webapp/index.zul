@@ -1,3 +1,4 @@
+<?init class="org.test.filter.MyInitial"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
 <?page title="welcome" contentType="text/html;charset=UTF-8"?>
 <zk xmlns:n="native" xmlns:w="client">

@@ -47,6 +47,50 @@ public class ArticleDataUtil {
 		}
 	}
 	
+	public static void removeArticleFromTree(Integer removeId,TreeNode<Article> root){
+		TreeNode<Article> parentNode = null;
+		List<TreeNode<Article>> atnList = new LinkedList();
+		atnList.add(root);
+		boolean findFlag = false;
+		for(int i = 0; i<atnList.size();i++){
+			TreeNode<Article> thisArticleTreeNode = atnList.get(i);			
+			List<TreeNode<Article>> thisChildren = thisArticleTreeNode.getChildren();
+			for(int j = 0; j< thisChildren.size();j++){				
+				if(thisChildren.get(j).getData().getArticleId() == removeId){
+					thisArticleTreeNode.remove(j);
+					findFlag = true;
+					break;
+				}				
+			}			
+			if(findFlag == true){
+				break;
+			}
+			atnList.addAll(thisChildren);
+		}
+	}
+	public static void editArticleFromTree(Article a,TreeNode<Article> root){
+		TreeNode<Article> parentNode = null;
+		List<TreeNode<Article>> atnList = new LinkedList();
+		atnList.add(root);
+		boolean findFlag = false;
+		for(int i = 0; i<atnList.size();i++){
+			TreeNode<Article> thisArticleTreeNode = atnList.get(i);			
+			List<TreeNode<Article>> thisChildren = thisArticleTreeNode.getChildren();
+			for(int j = 0; j< thisChildren.size();j++){				
+				if(thisChildren.get(j).getData().getArticleId() == a.getArticleId()){
+					thisChildren.get(j).getData().setContent(a.getContent());
+					thisChildren.get(j).getData().setTitle(a.getTitle());
+					findFlag = true;
+					break;
+				}				
+			}			
+			if(findFlag == true){
+				break;
+			}
+			atnList.addAll(thisChildren);
+		}
+	}
+	
 	private static TreeNode<Article> findArticleInTree(Integer parentId,TreeNode<Article> root){
 		TreeNode<Article> parentNode = null;
 		List<TreeNode<Article>> atnList = new LinkedList();

@@ -36,7 +36,9 @@ public class ArticleTreeNode extends DefaultTreeNode<Article> {
     public String getDate() {
     	logger.debug(getData().getDate());
     	if(getData().getDate()==null)
-    		getData().setDate(new Date(Calendar.getInstance().getTime().getTime()));    				
+    		getData().setDate(new Date(Calendar.getInstance().getTime().getTime()));
+  
+    				
         return getData().getDate().toString();
     }
     public String getUsername() {    	    
