@@ -189,15 +189,16 @@ public class ArticleService {
 		session.getTransaction().commit();
 	}
 	
-	public void deleteArticleAndChildren(Article article){
+	public List<Article> deleteArticleAndChildren(Article article){
 		List<Article> articleList = new ArrayList();
 		articleList.add(article);		
 		for(int i = 0; i< articleList.size();i++){
 			Article thisArticle = articleList.get(i);
+			articleList.addAll(getChildrenByParentId(thisArticle.getArticleId()));
 			deleteArticle(thisArticle);
-			articleList.addAll(getChildrenByParentId(article.getArticleId()));
-			logger.debug(i + ", " + article.getArticleId());
+			logger.warn(i + ", " + article.getArticleId());
 		}
+		return articleList;
 	}
 	
 	public void deleteArticle(Article article){		

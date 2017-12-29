@@ -1,0 +1,22 @@
+package org.test.model;
+
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+
+public class MyDate extends Date{
+	/**
+	 * 
+	 */
+	SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd");
+	private static final long serialVersionUID = 1L;
+
+	public MyDate(long date) {
+		super(date);
+		// TODO Auto-generated constructor stub
+	}
+	
+	@Override
+	public String toString(){
+		return sdFormat.format(super.getTime());
+	}
+}

@@ -80,7 +80,7 @@
 			</vbox>
 		</hbox>
 		<button label="${c:l('newArticle')}"
-			onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=0)"
+			onClick="@command('savePopupComp',action=0)"
 			popup="ckarticleEditor" />
 
 		<tabbox width="100%" sclass="nav_tabs">
@@ -118,13 +118,13 @@
 
 									<button label="${labels.reply}"
 										popup="ckarticleEditor"
-										onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=1)" />
+										onClick="@command('savePopupComp',action=1)" />
 									<if test="@load(vm.author)">
 										<if
 											test="@load(not vm.hasChildren)">
 											<button label="${labels.edit}"
 												popup="ckarticleEditor"
-												onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=2)" />
+												onClick="@command('savePopupComp',action=2)" />
 										</if>
 										<button label="${labels.delete}"
 											onClick="@command('delete')" />
@@ -210,12 +210,12 @@
 							<hlayout height="50px">
 								<button id="replybtn" label="${labels.reply}"
 									popup="ckarticleEditor"
-									onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=1)" />
+									onClick="@command('savePopupComp',action=1)" />
 								<if test="@load(vm.author)">
 									<if	test="@load(not vm.hasChildren)">
 										<button id="editbtn"
 											label="${labels.edit}" popup="ckarticleEditor"
-											onClick="@command('savePopupComp',popup1=ckarticleEditor,popup2=undoPopup,chbox=chbox,action=2)" />
+											onClick="@command('savePopupComp',action=2)" />
 									</if>
 									<button id="deletebtn"
 										label="${labels.delete}" onClick="@command('delete')" />
@@ -241,14 +241,14 @@
 				</tabpanel>
 			</tabpanels>
 		</tabbox>
-		<popup id="ckarticleEditor">
+		<window id="ckarticleEditor" visible="@bind(vm.window1Visible)" mode="overlapped">
 			<vlayout>
 				<hlayout>
 					${labels.title}
 					<textbox id="inputTitle" width="750px" tabindex="1"
 						value="@bind(vm.tempArticle.title)" />
 				</hlayout>
-				<chosenbox id="chbox" width="440px"
+				<chosenbox  width="440px"
 					model="${vm.chosenboxModel}" creatable="true"
 					selectedItems="@bind(vm.pickedChosenboxItem)" />
 				<n:form>
@@ -260,16 +260,23 @@
 						</attribute>
 					</ckeditor>
 				</n:form>
+				<hlayout>
 				<button label="${labels.confirm}"
-					onClick="@command('confirmArticle')" popup="undoPopup">
-				</button>
+					onClick="@command('confirmArticle')" popup="undoPopup"/>
+				<button label="close" onClick="@command('popupOff')"/>
+				</hlayout>
 			</vlayout>
-		</popup>
-		<popup id="undoPopup">
+		</window>
+		<window id="undoPopup" visible="@bind(vm.window2Visible)" mode="overlapped">
 			處理中...
 			<button id="undo" label="undo"
 				onClick="@command('changeUndoFlag')" />
-		</popup>
+		</window>
+		<window id="confirmWindow" visible="@bind(vm.window3Visible)" mode="overlapped">
+			您的文章未被發送出
+			<button id="confirm" label="confirm"
+				onClick="@command('closeWindow3')" />
+		</window>
 		<popup id="undoConfirmPopup"></popup>
 		<separator height="30px"></separator>
 	</window>

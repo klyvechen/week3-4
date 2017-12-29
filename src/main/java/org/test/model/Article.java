@@ -3,6 +3,8 @@ package org.test.model;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,6 +24,7 @@ public class Article implements Cloneable,  Serializable {
 	private String margin;
 	private List<Article> children = new LinkedList<Article>();
 	private UserService us = new UserService();
+	SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd");
 	
 	public Article(){
 		this.title = "default title";
@@ -76,9 +79,15 @@ public class Article implements Cloneable,  Serializable {
 		this.content = content;
 	}
 	
-	public Date getDate() {		
-		
-		return date;
+	public Date getDate(){
+		MyDate tempDate= new MyDate(Calendar.getInstance().getTime().getTime());
+		if(date==null || time == null){
+    		date = new Date(Calendar.getInstance().getTime().getTime());
+    		time = new Time(Calendar.getInstance().getTime().getTime());
+    	}else{
+    		tempDate.setTime(date.getTime()+time.getTime());
+		}
+		return tempDate;
 	}
 	public void setDate(Date date) {
 		this.date = date;

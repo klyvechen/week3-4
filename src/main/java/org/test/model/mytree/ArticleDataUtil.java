@@ -11,19 +11,17 @@ import org.zkoss.zul.TreeNode;
 
 public class ArticleDataUtil {
 	final static Logger logger = Logger.getLogger(ArticleDataUtil.class);
-	private static ArticleTreeNode root;
 	private static ArticleService as = new ArticleService();
 	private List<Article> articleList;	
 	
-	public static ArticleTreeNode getRoot(){
-		buildArticleTree();
-		return root;
+	public ArticleTreeNode getRoot(){		
+		return buildArticleTree();
 	}
 	
-	public static void buildArticleTree(){
+	public ArticleTreeNode buildArticleTree(){
 		Article rootArticle = new Article();
 		rootArticle.setArticleId(null);
-		root = new ArticleTreeNode(rootArticle,new LinkedList());
+		ArticleTreeNode root = new ArticleTreeNode(rootArticle,new LinkedList());
 		List<ArticleTreeNode> atnList = new ArrayList<ArticleTreeNode>();
 		atnList.add(root);
 		for(int i = 0; i<atnList.size();i++){
@@ -36,6 +34,7 @@ public class ArticleDataUtil {
 			}			
 			thisArticleTreeNode.getData().setChildren(thisChildren);
 		}
+		return root;
 	}
 	public static void addArticleToTree(Article a,ArticleTreeModel treeModel){
 		
@@ -43,6 +42,7 @@ public class ArticleDataUtil {
 		if(parentArticle!=null){
 			parentArticle.add(new ArticleTreeNode(a,new LinkedList()));
 		}else {
+			
 			((TreeNode)treeModel.getRoot()).add(new ArticleTreeNode(a,new LinkedList()));
 		}
 	}
@@ -119,5 +119,16 @@ public class ArticleDataUtil {
 //		List<Article> children = as.getChildrenByParentId(thisArticle.getArticleId());
 //		return children;
 //	}
+	public static void setArticleAasB(Article a, Article b){
+		a.setArticleId(b.getArticleId());
+		a.setContent(b.getContent());
+		a.setDate(b.getDate());
+		a.setGeneration(b.getGeneration());
+		a.setParentId(b.getParentId());
+		a.setRootId(b.getRootId());
+		a.setTime(b.getTime());
+		a.setTitle(b.getTitle());
+		a.setUserId(b.getUserId());
+	}
 	
 }
