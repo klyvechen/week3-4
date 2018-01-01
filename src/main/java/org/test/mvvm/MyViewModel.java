@@ -14,7 +14,6 @@ import org.test.model.Tag;
 import org.test.model.TagDetail;
 import org.test.model.User;
 import org.test.model.group.ArticleComparator;
-import org.test.model.group.ArticleGroupModel;
 import org.test.model.mytree.ArticleDataUtil;
 import org.test.model.mytree.ArticleTreeModel;
 import org.test.model.mytree.ArticleTreeNode;
@@ -54,7 +53,6 @@ public class MyViewModel {
 	private List<Article> lastest10UserArticle, lastest10Article, lastest10Reply, allArticles, listModel, deleteList;
 	private List<Tag> allTagList;
 	private List<Tag> selectedTagList;
-	private ArticleGroupModel groupModel;
 	private ArticleTreeModel myArticleTreeModel;
 	private ArticleTreeNode pickedTreeItem;
 	private ArticleTreeNode rootArticle;
@@ -85,23 +83,16 @@ public class MyViewModel {
 	private boolean window1Visible = false;
 	private boolean window2Visible = false;
 	private boolean window3Visible = false;
-	private boolean editing = false; 
+	private boolean editing = false;
 	private volatile static String action = "";
 	private static Integer newArticleId;
 
 	@Init
 	public void init() {
-		// SampleExecutorHolder seh = new SampleExecutorHolder();
+		HibernateUtil.getSessionFactory();
 		SampleExecutorHolder seh = new SampleExecutorHolder();
 		sess = Sessions.getCurrent();
 		theUser = (User) sess.getAttribute("sessionUser");
-
-		logger.warn(theUser);
-		HibernateUtil.getSessionFactory();
-		List<Article> atary = as.getAllArticles();
-		Article[] ary = new Article[atary.size()];
-		ary = atary.toArray(ary);
-		this.groupModel = new ArticleGroupModel(ary, new ArticleComparator());
 		this.setLastest10Article(as.getLastest10Article());
 		this.setLastest10Reply(as.getLastest10Reply());
 		this.setLastest10UserArticle(as.getLastest10UserArticle(theUser.getUserid()));
@@ -120,7 +111,7 @@ public class MyViewModel {
 						BindUtils.postNotifyChange(null, null, MyViewModel.this, "window1Visible");
 						insertOrUpdateArticle();
 						listModel = as.getArticleDFSResult(shareArticle);
-						notifyallEventQueuePublish();						
+						notifyallEventQueuePublish();
 						setUndoFlag(false);
 					}
 					editing = false;
@@ -147,85 +138,12 @@ public class MyViewModel {
 		this.notifyallEventQueue.publish(new Event("notifyall", null, this.deleteList));
 	}
 
-	public boolean isWindow1Visible() {
-		logger.debug("in function");
-		return window1Visible;
-	}
-
-	public void setWindow1Visible(boolean window1Visible) {
-		logger.warn("in function");
-		this.window1Visible = window1Visible;
-	}
-
-	public boolean isWindow2Visible() {
-		logger.warn("in function");
-		return window2Visible;
-	}
-
-	public void setWindow2Visible(boolean window2Visible) {
-		logger.warn("in function");
-		this.window2Visible = window2Visible;
-	}
-
-	public boolean isHasChildren() {
-		logger.warn("in function");
-		return hasChildren;
-	}
-
-	public void setHasChildren(boolean hasChildren) {
-		logger.warn("in function");
-		this.hasChildren = hasChildren;
-	}
-
-	public Article getPickedListItem() {
-		logger.warn("in function");
-		return pickedListItem;
-	}
-
-	public void setPickedListItem(Article pickedListItem) {
-		logger.warn("in function");
-		this.pickedListItem = pickedListItem;
-		this.setPickedArticle(this.pickedListItem);
-	}
-
-	public ArticleTreeNode getPickedTreeItem() {
-		logger.warn("in function");
-		return pickedTreeItem;
-	}
-
-	public List<Article> getDeleteList() {
-		logger.warn("in function");
-		return deleteList;
-	}
-
-	public void setDeleteList(List<Article> deleteList) {
-		logger.warn("in function");
-		this.deleteList = new LinkedList();
-		for (int i = 0; i < deleteList.size(); i++) {
-			this.deleteList.add(deleteList.get(i));
-		}
-	}
-
-	public void setPickedTreeItem(ArticleTreeNode pickedTreeItem) {
-		logger.warn("in function");
-		this.pickedTreeItem = pickedTreeItem;
-		if(this.pickedTreeItem.getData() != null){
-			
-			this.setPickedArticle(this.pickedTreeItem.getData());
-		}
-	}
-
-	public Article getPickedArticle() {
-		logger.warn("in function");
-		return pickedArticle;
-	}
-
 	@NotifyChange({ "tempArticle", "author", "mainArticle", "listModel", "selectedTagList", "hasChildren" })
 	public void setPickedArticle(Article pickedArticle) {
 		logger.warn("in function");
-		if(pickedArticle != null){
-			this.pickedArticle = pickedArticle;			
-		}else{
+		if (pickedArticle != null) {
+			this.pickedArticle = pickedArticle;
+		} else {
 			this.pickedArticle = this.allArticles.get(1);
 		}
 		this.tempArticle.setArticleId(this.pickedArticle.getArticleId());
@@ -245,64 +163,113 @@ public class MyViewModel {
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "hasChildren");
 	}
 
+	/*** getter and setter ***/
+
+	public boolean isWindow1Visible() {
+		return window1Visible;
+	}
+
+	public void setWindow1Visible(boolean window1Visible) {
+		this.window1Visible = window1Visible;
+	}
+
+	public boolean isWindow2Visible() {
+		return window2Visible;
+	}
+
+	public void setWindow2Visible(boolean window2Visible) {
+		this.window2Visible = window2Visible;
+	}
+
+	public boolean isHasChildren() {
+		return hasChildren;
+	}
+
+	public void setHasChildren(boolean hasChildren) {
+		this.hasChildren = hasChildren;
+	}
+
+	public Article getPickedListItem() {
+		return pickedListItem;
+	}
+
+	public void setPickedListItem(Article pickedListItem) {
+		this.pickedListItem = pickedListItem;
+		this.setPickedArticle(this.pickedListItem);
+	}
+
+	public ArticleTreeNode getPickedTreeItem() {
+		return pickedTreeItem;
+	}
+
+	public void setPickedTreeItem(ArticleTreeNode pickedTreeItem) {
+		this.pickedTreeItem = pickedTreeItem;
+		if (this.pickedTreeItem.getData() != null) {
+
+			this.setPickedArticle(this.pickedTreeItem.getData());
+		}
+	}
+
+	public List<Article> getDeleteList() {
+		return deleteList;
+	}
+
+	public void setDeleteList(List<Article> deleteList) {
+		this.deleteList = new LinkedList();
+		for (int i = 0; i < deleteList.size(); i++) {
+			this.deleteList.add(deleteList.get(i));
+		}
+	}
+
+	public Article getPickedArticle() {
+		return pickedArticle;
+	}
+
 	public List<Article> getListModel() {
-		logger.warn("in function");
 		return listModel;
 	}
 
 	public void setListModel(List<Article> listModel) {
-		logger.warn("in function");
 		this.listModel = listModel;
 	}
 
 	public boolean isMainArticle() {
-		logger.warn("in function");
 		return mainArticle;
 	}
 
 	public void setMainArticle(boolean mainArticle) {
-		logger.warn("in function");
 		this.mainArticle = mainArticle;
 	}
 
-	/**** start to get datas ***/
 	public Session getSess() {
-		logger.warn("in function");
 		return sess;
 	}
 
 	public void setSess(Session sess) {
-		logger.warn("in function");
 		this.sess = sess;
 	}
 
 	public ListModelList getChosenboxModel() {
-		logger.warn("in function");
 		return chosenboxModel;
 	}
 
 	public void setChosenboxModel(ListModelList chosenboxModel) {
-		logger.warn("in function");
 		this.chosenboxModel = chosenboxModel;
 	}
 
 	public Set getPickedChosenboxItem() {
-		logger.warn("in function");
 		return pickedChosenboxItem;
 	}
 
 	public void setPickedChosenboxItem(Set pickedChosenboxItem) {
-		logger.warn("in function");
 		this.pickedChosenboxItem = pickedChosenboxItem;
 	}
 
 	public List<Tag> getSelectedTagList() {
-		logger.warn("in function");
 		return selectedTagList;
 	}
 
 	public void setSelectedTagList(List<Tag> selectedTagList) {
-		logger.warn("in function");
 		this.selectedTagList = selectedTagList;
 	}
 
@@ -338,7 +305,6 @@ public class MyViewModel {
 		this.allTagList = allTagList;
 	}
 
-	@NotifyChange({ "lastest10Article" })
 	public void setLastest10Article(List<Article> lastest10Article) {
 		logger.warn("do lastest10Article");
 		this.lastest10Article = lastest10Article;
@@ -348,9 +314,7 @@ public class MyViewModel {
 		return this.lastest10Article;
 	}
 
-	@NotifyChange({ "lastest10Reply" })
 	public void setLastest10Reply(List<Article> lastest10Article) {
-		System.out.print("do lastest10Reply");
 		this.lastest10Reply = lastest10Article;
 	}
 
@@ -362,18 +326,21 @@ public class MyViewModel {
 		this.action = action;
 	}
 
+	public boolean isUndoFlag() {
+		return undoFlag;
+	}
+
+	public void setUndoFlag(boolean undoFlag) {
+		this.undoFlag = undoFlag;
+	}
+
 	@NotifyChange
 	public void setLastest10UserArticle(List<Article> articles) {
-		System.out.print("do lastest10UserArticle");
 		this.lastest10UserArticle = articles;
 	}
 
 	public List<Article> getLastest10UserArticle() {
 		return this.lastest10UserArticle;
-	}
-
-	public ArticleGroupModel getGroupModel() {
-		return this.groupModel;
 	}
 
 	public Article getTempArticle() {
@@ -384,23 +351,25 @@ public class MyViewModel {
 		this.tempArticle = tempArticle;
 	}
 
-	@NotifyChange({ "groupModel" })
-	public void setGroupModel(ArticleGroupModel agm) {
-		this.groupModel = agm;
+	public boolean isWindow3Visible() {
+		return window3Visible;
 	}
 
+	public void setWindow3Visible(boolean window3Visible) {
+		this.window3Visible = window3Visible;
+	}
+	
+	public boolean getAuthor() {
+		boolean isAuthor = (this.pickedArticle != null) ? (this.pickedArticle.getUserId() == theUser.getUserid())
+				: false;
+		return this.author;
+	}
+
+	/*** command zone ***/
 	@Command
 	public void logout() {
 		sess.setAttribute("sessionUser", null);
 		Executions.sendRedirect("/login.zul");
-	}
-
-	public boolean isUndoFlag() {
-		return undoFlag;
-	}
-
-	public void setUndoFlag(boolean undoFlag) {
-		this.undoFlag = undoFlag;
 	}
 
 	@NotifyChange({ "window3Visible" })
@@ -409,23 +378,14 @@ public class MyViewModel {
 		this.window3Visible = false;
 	}
 
-	public boolean isWindow3Visible() {
-		return window3Visible;
-	}
-
-	public void setWindow3Visible(boolean window3Visible) {
-		this.window3Visible = window3Visible;
-	}
-
-	/*** start to insert update data ***/
+	/*** start to data from ckeditor ***/
 
 	@NotifyChange("window1Visible")
 	@Command("savePopupComp")
 	public void savePopupCompfunc(@BindingParam("action") Integer action) {
-		if(editing == false){
+		if (editing == false) {
 			editing = true;
 			this.window1Visible = true;
-			logger.warn("in save popupcomp");
 			if (action == 0) {
 				newArticle();
 			} else if (action == 1) {
@@ -434,7 +394,7 @@ public class MyViewModel {
 			} else if (action == 2) {
 				setChosenboxSelectItem();
 				edit();
-			}			
+			}
 		}
 	}
 
@@ -445,9 +405,9 @@ public class MyViewModel {
 		this.window1Visible = false;
 		this.window2Visible = false;
 	}
+
 	@NotifyChange({ "tempArticle" })
 	public void newArticle() {
-		logger.debug("new Article dosomething");		
 		this.action = "insert";
 		this.tempArticle.setContent("");
 		this.tempArticle.setTitle("");
@@ -478,7 +438,6 @@ public class MyViewModel {
 			this.tempArticle.setParentId(this.pickedArticle.getParentId());
 			this.tempArticle.setRootId(this.pickedArticle.getRootId());
 			this.tempArticle.setUserId(this.pickedArticle.getUserId());
-
 		} else {
 			Messagebox.show("only reply can be edited");
 			this.window1Visible = false;
@@ -521,11 +480,6 @@ public class MyViewModel {
 		this.executorService.execute(new insertAfter5Sec(this.insertAfter5, this.desktop, al));
 	}
 
-	public boolean getAuthor() {
-		boolean isAuthor = (this.pickedArticle != null) ? (this.pickedArticle.getUserId() == theUser.getUserid())
-				: false;
-		return this.author;
-	}
 
 	private void insertOrUpdateArticle() {
 		if (this.undoFlag == false) {
@@ -533,7 +487,6 @@ public class MyViewModel {
 			dealArticle();
 			this.window1Visible = false;
 			this.window2Visible = false;
-
 		} else {
 			this.undoFlag = false;
 		}
@@ -542,7 +495,6 @@ public class MyViewModel {
 	@NotifyChange({ "window2Visible", "window3Visible" })
 	@Command
 	public void changeUndoFlag() {
-		logger.debug("undo inser article");
 		editing = false;
 		this.undoFlag = true;
 		this.window2Visible = false;
@@ -555,7 +507,6 @@ public class MyViewModel {
 		if (this.action.equals("insert")) {
 			as.insertNewArticle(shareArticle);
 		} else if (this.action.equals("update")) {
-
 			as.updateArticle(shareArticle);
 			tds.deleteTagDetailByArticleId(shareArticle.getArticleId());
 		}
@@ -567,25 +518,22 @@ public class MyViewModel {
 		}
 	}
 
+	
+	/***the total model notifier***/
 	// not working in zk eventQueue
 	// https://stackoverflow.com/questions/18382760/zk-eventqueue-working-but-data-not-refreshing
 	@NotifyChange({ "tempArticle", "author", "mainArticle", "listModel", "selectedTagList", "myArticleTreeModel",
-			"groupModel", "lastest10Reply", "lastest10Article", "lastest10UserArticle", "allArticles" })
+			"lastest10Reply", "lastest10Article", "lastest10UserArticle", "allArticles" })
 	public void notifiyToAll() {
-		logger.debug("in the que event listener");
-
 		setLastest10Article(as.getLastest10Article());
 		setLastest10Reply(as.getLastest10Reply());
 		setLastest10UserArticle(as.getLastest10UserArticle(theUser.getUserid()));
-		// setAllArticles(as.getAllArticles());
-		logger.warn("action is " + action);
 		setShareArticle();
 		renewTreeModel();
 		renewAllModel();
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "lastest10UserArticle");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "lastest10Article");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "lastest10Reply");
-		BindUtils.postNotifyChange(null, null, MyViewModel.this, "groupModel");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "myArticleTreeModel");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "tempArticle");
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "author");
@@ -595,6 +543,7 @@ public class MyViewModel {
 		BindUtils.postNotifyChange(null, null, MyViewModel.this, "allArticles");
 	}
 
+	/***the total model renewer***/
 	public void renewTreeModel() {
 		Article a = new Article();
 		ArticleDataUtil.setArticleAasB(a, shareArticle);
@@ -607,43 +556,38 @@ public class MyViewModel {
 		}
 	}
 
-	public void renewAllModel2() {
-		as.getAllArticles();
-	}
 	public void renewAllModel() {
 		Article a = new Article();
 		ArticleDataUtil.setArticleAasB(a, shareArticle);
 		if (action.equals("insert")) {
 			this.allArticles.add(a);
-
 		} else if (action.equals("update")) {
 			for (int i = 0; i < this.allArticles.size(); i++) {
-				if (this.allArticles.get(i).getArticleId() == a.getArticleId()) {
-					logger.warn("in the allarticle and change content and title");
-					allArticles.get(i).setContent(a.getContent());
-					allArticles.get(i).setTitle(a.getTitle());
+				Article allArticleChildi = this.allArticles.get(i);
+				if (allArticleChildi.getArticleId() == a.getArticleId()) {
+					allArticleChildi.setContent(a.getContent());
+					allArticleChildi.setTitle(a.getTitle());
 				}
 			}
 
 		} else {
-			List<Article> removeIndexList = new LinkedList(); 
+			List<Article> removeIndexList = new LinkedList();
 			int k = 0;
 			for (int i = 0; i < allArticles.size(); i++) {
 				Article article = allArticles.get(i);
 				for (int j = 0; j < this.deleteList.size(); j++) {
-					if ( article.getArticleId().equals(deleteList.get(j).getArticleId())) {
-						logger.warn("k = "+ k++);
-						
-						removeIndexList.add(article); 						
+					if (article.getArticleId().equals(deleteList.get(j).getArticleId())) {
+						logger.warn("k = " + k++);
+
+						removeIndexList.add(article);
 					}
 				}
 			}
-			for(int i = 0; i< removeIndexList.size(); i++){				
+			for (int i = 0; i < removeIndexList.size(); i++) {
 				allArticles.remove(removeIndexList.get(i));
 			}
 		}
 	}
-	
 
 	public void renewListModel() {
 		Article a = new Article();
@@ -658,17 +602,18 @@ public class MyViewModel {
 			((LinkedList) this.listModel).add(lastChildIndex + 1, a);
 		} else if (action.equals("update")) {
 			for (int i = 0; i < this.listModel.size(); i++) {
-				if (this.listModel.get(i).getArticleId() == a.getArticleId()) {
-					logger.warn("in the listmodel and change content and title");
-					listModel.get(i).setContent(a.getContent());
-					listModel.get(i).setTitle(a.getTitle());
+				Article listchild = listModel.get(i);
+				if (listchild.getArticleId() == a.getArticleId()) {
+					listchild.setContent(a.getContent());
+					listchild.setTitle(a.getTitle());
 				}
 			}
 		} else {
 			for (int i = 0; i < listModel.size(); i++) {
 				for (int j = 0; j < this.deleteList.size(); j++) {
-					if (listModel.get(i).getArticleId() == deleteList.get(j).getArticleId()) {
-						listModel.remove(listModel.get(i));
+					Article listchild = listModel.get(i);
+					if (listchild.getArticleId() == deleteList.get(j).getArticleId()) {
+						listModel.remove(listchild);
 					}
 				}
 			}
@@ -679,7 +624,6 @@ public class MyViewModel {
 		if (action.equals("insert")) {
 			shareArticle.setArticleId(newArticleId);
 		}
-		// shareArticle.setGeneration(as.getArticleGeneration(shareArticle));
 		Article a = as.getArticleById(shareArticle.getArticleId());
 		if (a != null) {
 			shareArticle.setDate(as.getArticleById(shareArticle.getArticleId()).getDate());
@@ -703,6 +647,5 @@ public class MyViewModel {
 		this.tempArticle.setTitle("");
 		this.tempArticle.setContent("");
 		this.tempArticle.setParentId(null);
-		this.tempArticle.setArticleId(null);
 	}
 }

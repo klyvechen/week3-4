@@ -2,6 +2,7 @@ package org.test.filter;
 
 import java.util.Map;
 
+import org.test.hibernate.util.HibernateUtil;
 import org.test.model.User;
 import org.test.myevent.SampleExecutorHolder;
 import org.zkoss.bind.annotation.Init;
@@ -14,6 +15,7 @@ import org.zkoss.zk.ui.util.Initiator;
 public class MyInitial implements Initiator {
 	public void doInit(Page page, Map<String, Object> args) throws Exception {
 		SampleExecutorHolder seh = new SampleExecutorHolder();
+		
 		sess = Sessions.getCurrent();
 		theUser = (User) sess.getAttribute("sessionUser");
 		if(theUser == null){			

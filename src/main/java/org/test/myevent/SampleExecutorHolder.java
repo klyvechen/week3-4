@@ -9,23 +9,19 @@ import org.zkoss.zk.ui.util.WebAppInit;
 
 public class SampleExecutorHolder {
 
-    private static volatile ExecutorService executor;
+	private static volatile ExecutorService executor;
 
-    public static ExecutorService getExecutor() {
-        return executor;
-    }
-    public void cleanup(WebApp wapp) throws Exception {
-        if (executor != null) {
-            executor.shutdown();
-            System.out.println("ExecutorService shut down");
-        }
-    }
-    
-    public SampleExecutorHolder(){
-    	executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        System.out.println("Initialized an ExecutorService");
-        System.out.println("thread number is " + Runtime.getRuntime().availableProcessors());
-    }
-    
+	public static ExecutorService getExecutor() {
+		return executor;
+	}
 
+	public void cleanup(WebApp wapp) throws Exception {
+		if (executor != null) {
+			executor.shutdown();
+		}
+	}
+
+	public SampleExecutorHolder() {
+		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+	}
 }

@@ -12,114 +12,113 @@ import org.zkoss.zul.TreeNode;
 public class ArticleDataUtil {
 	final static Logger logger = Logger.getLogger(ArticleDataUtil.class);
 	private static ArticleService as = new ArticleService();
-	private List<Article> articleList;	
-	
-	public ArticleTreeNode getRoot(){		
+	private List<Article> articleList;
+
+	public ArticleTreeNode getRoot() {
 		return buildArticleTree();
 	}
-	
-	public ArticleTreeNode buildArticleTree(){
+
+	public ArticleTreeNode buildArticleTree() {
 		Article rootArticle = new Article();
 		rootArticle.setArticleId(null);
-		ArticleTreeNode root = new ArticleTreeNode(rootArticle,new LinkedList());
+		ArticleTreeNode root = new ArticleTreeNode(rootArticle, new LinkedList());
 		List<ArticleTreeNode> atnList = new ArrayList<ArticleTreeNode>();
 		atnList.add(root);
-		for(int i = 0; i<atnList.size();i++){
-			ArticleTreeNode thisArticleTreeNode = atnList.get(i);			
+		for (int i = 0; i < atnList.size(); i++) {
+			ArticleTreeNode thisArticleTreeNode = atnList.get(i);
 			List<Article> thisChildren = as.getChildrenByParentIdAsc(thisArticleTreeNode.getData().getArticleId());
-			for(int j = 0; j< thisChildren.size();j++){				
-				ArticleTreeNode child = new ArticleTreeNode(thisChildren.get(j),new LinkedList());
+			for (int j = 0; j < thisChildren.size(); j++) {
+				ArticleTreeNode child = new ArticleTreeNode(thisChildren.get(j), new LinkedList());
 				thisArticleTreeNode.add(child);
 				atnList.add(child);
-			}			
+			}
 			thisArticleTreeNode.getData().setChildren(thisChildren);
 		}
 		return root;
 	}
-	public static void addArticleToTree(Article a,ArticleTreeModel treeModel){
-		
-		ArticleTreeNode parentArticle = (ArticleTreeNode)findArticleInTree(a.getParentId(),(TreeNode)treeModel.getRoot());
-		if(parentArticle!=null){
-			parentArticle.add(new ArticleTreeNode(a,new LinkedList()));
-		}else {
-			
-			((TreeNode)treeModel.getRoot()).add(new ArticleTreeNode(a,new LinkedList()));
+
+	public static void addArticleToTree(Article a, ArticleTreeModel treeModel) {
+
+		ArticleTreeNode parentArticle = (ArticleTreeNode) findArticleInTree(a.getParentId(),
+				(TreeNode) treeModel.getRoot());
+		if (parentArticle != null) {
+			parentArticle.add(new ArticleTreeNode(a, new LinkedList()));
+		} else {
+
+			((TreeNode) treeModel.getRoot()).add(new ArticleTreeNode(a, new LinkedList()));
 		}
 	}
-	
-	public static void removeArticleFromTree(Integer removeId,TreeNode<Article> root){
+
+	public static void removeArticleFromTree(Integer removeId, TreeNode<Article> root) {
 		TreeNode<Article> parentNode = null;
 		List<TreeNode<Article>> atnList = new LinkedList();
 		atnList.add(root);
 		boolean findFlag = false;
-		for(int i = 0; i<atnList.size();i++){
-			TreeNode<Article> thisArticleTreeNode = atnList.get(i);			
+		for (int i = 0; i < atnList.size(); i++) {
+			TreeNode<Article> thisArticleTreeNode = atnList.get(i);
 			List<TreeNode<Article>> thisChildren = thisArticleTreeNode.getChildren();
-			for(int j = 0; j< thisChildren.size();j++){				
-				if(thisChildren.get(j).getData().getArticleId() == removeId){
+			for (int j = 0; j < thisChildren.size(); j++) {
+				if (thisChildren.get(j).getData().getArticleId() == removeId) {
 					thisArticleTreeNode.remove(j);
 					findFlag = true;
 					break;
-				}				
-			}			
-			if(findFlag == true){
+				}
+			}
+			if (findFlag == true) {
 				break;
 			}
 			atnList.addAll(thisChildren);
 		}
 	}
-	public static void editArticleFromTree(Article a,TreeNode<Article> root){
+
+	public static void editArticleFromTree(Article a, TreeNode<Article> root) {
 		TreeNode<Article> parentNode = null;
 		List<TreeNode<Article>> atnList = new LinkedList();
 		atnList.add(root);
 		boolean findFlag = false;
-		for(int i = 0; i<atnList.size();i++){
-			TreeNode<Article> thisArticleTreeNode = atnList.get(i);			
+		for (int i = 0; i < atnList.size(); i++) {
+			TreeNode<Article> thisArticleTreeNode = atnList.get(i);
 			List<TreeNode<Article>> thisChildren = thisArticleTreeNode.getChildren();
-			for(int j = 0; j< thisChildren.size();j++){				
-				if(thisChildren.get(j).getData().getArticleId() == a.getArticleId()){
+			for (int j = 0; j < thisChildren.size(); j++) {
+				if (thisChildren.get(j).getData().getArticleId() == a.getArticleId()) {
 					thisChildren.get(j).getData().setContent(a.getContent());
 					thisChildren.get(j).getData().setTitle(a.getTitle());
 					findFlag = true;
 					break;
-				}				
-			}			
-			if(findFlag == true){
+				}
+			}
+			if (findFlag == true) {
 				break;
 			}
 			atnList.addAll(thisChildren);
 		}
 	}
-	
-	private static TreeNode<Article> findArticleInTree(Integer parentId,TreeNode<Article> root){
+
+	private static TreeNode<Article> findArticleInTree(Integer parentId, TreeNode<Article> root) {
 		TreeNode<Article> parentNode = null;
 		List<TreeNode<Article>> atnList = new LinkedList();
 		atnList.add(root);
 		boolean findFlag = false;
-		for(int i = 0; i<atnList.size();i++){
-			TreeNode<Article> thisArticleTreeNode = atnList.get(i);			
+		for (int i = 0; i < atnList.size(); i++) {
+			TreeNode<Article> thisArticleTreeNode = atnList.get(i);
 			List<TreeNode<Article>> thisChildren = thisArticleTreeNode.getChildren();
 			logger.debug(thisChildren.size());
-			for(int j = 0; j< thisChildren.size();j++){				
-				if(thisChildren.get(j).getData().getArticleId() == parentId){
+			for (int j = 0; j < thisChildren.size(); j++) {
+				if (thisChildren.get(j).getData().getArticleId() == parentId) {
 					parentNode = thisChildren.get(j);
 					findFlag = true;
 					break;
-				}				
-			}			
-			if(findFlag == true){
+				}
+			}
+			if (findFlag == true) {
 				break;
 			}
 			atnList.addAll(thisChildren);
 		}
-		
 		return parentNode;
 	}
-//	private List<Article> selectChildren(Article thisArticle){
-//		List<Article> children = as.getChildrenByParentId(thisArticle.getArticleId());
-//		return children;
-//	}
-	public static void setArticleAasB(Article a, Article b){
+
+	public static void setArticleAasB(Article a, Article b) {
 		a.setArticleId(b.getArticleId());
 		a.setContent(b.getContent());
 		a.setDate(b.getDate());
@@ -130,5 +129,5 @@ public class ArticleDataUtil {
 		a.setTitle(b.getTitle());
 		a.setUserId(b.getUserId());
 	}
-	
+
 }

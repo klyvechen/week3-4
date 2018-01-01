@@ -8,10 +8,13 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.test.model.service.UserService;
+import org.test.mvvm.MyViewModel;
 
 
 public class Article implements Cloneable,  Serializable {
+	final static Logger logger = Logger.getLogger(Article.class);
 	private Integer articleId; //primary key
 	private Integer parentId;
 	private Integer rootId;
@@ -24,7 +27,7 @@ public class Article implements Cloneable,  Serializable {
 	private String margin;
 	private List<Article> children = new LinkedList<Article>();
 	private UserService us = new UserService();
-	SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd");
+	private SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd");
 	
 	public Article(){
 		this.title = "default title";
@@ -117,8 +120,9 @@ public class Article implements Cloneable,  Serializable {
 	
     public String getUsername() {
     	String username;
-    	if(getUserId() != null)
+    	if(getUserId() != null){
     		username =us.getUserById(getUserId()).getUsername();
+    	}
     	else
     		username = "default name";
         return username;

@@ -10,16 +10,14 @@ public class ArticleComparator implements Comparator<Article>, GroupComparator<A
 	private static final long serialVersionUID = 1L;
 
 	public int compareGroup(Article o1, Article o2) {
-	
-		Integer result = o1.getRootId()-o2.getRootId();
+		Integer result = o1.getRootId() - o2.getRootId();
 		return result;
-	
 	}
 
 	public int compare(Article o1, Article o2) {
-		if(o1.getRootId()-o2.getRootId() == 0){
+		if (o1.getRootId() - o2.getRootId() == 0) {
 			return 0;
-		}else{
+		} else {
 			return 1;
 		}
 	}

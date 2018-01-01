@@ -41,7 +41,6 @@ public class LoginViewModel {
 	@Command
 	public void AuthenticateUser() {
 		if (AuthenService.verifyUser(loginUser)) {
-			System.out.println("Login success");
 			sess.setAttribute("sessionUser", loginUser);
 			 Executions.sendRedirect("/index.zul");
 		}else{

@@ -24,11 +24,8 @@ public class insertAfter5Sec implements Runnable{
 	public void run() {		
 		//que2 = EventQueues.lookup("count to x second", EventQueues.APPLICATION,true);
 		try {
-			System.out.println("i++ is "+(i++));
 			Thread.sleep(2500);			
-			System.out.println("insert after 5 to publish");
 			insertAfter5.publish(new Event("x second " + String.valueOf(i),null, this.al));
-			System.out.println("insert after 5 publish ok");
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

@@ -7,12 +7,11 @@ public class MyDate extends Date{
 	/**
 	 * 
 	 */
-	SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd");
+	private SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd");
 	private static final long serialVersionUID = 1L;
 
 	public MyDate(long date) {
 		super(date);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
